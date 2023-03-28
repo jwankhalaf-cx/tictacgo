@@ -183,7 +183,7 @@ ClientBin/
 orleans.codegen.cs
 
 node_modules
-
+obj/Debug/net7.0
 
 # RIA/Silverlight projects
 Generated_Code/
