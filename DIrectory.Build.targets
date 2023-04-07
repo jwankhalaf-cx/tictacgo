@@ -1,6 +1,0 @@
-<Project>
-  <Target Name="Build" DependsOnTargets="">
-    <Csc Source="@(Compile)" />
-    <Exec Command="echo Hello World!" />
-  </Target>
-</Project>

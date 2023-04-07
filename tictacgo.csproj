@@ -29,4 +29,5 @@
   <Target Name="RunTailwind" AfterTargets="AfterBuild">
     <Exec Command="npm run tree-shake" />
   </Target>
+  
 </Project>
