@@ -11,4 +11,22 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.2" PrivateAssets="all" />
   </ItemGroup>
 
+  <Target Name="CheckNodeVersion" BeforeTargets="BeforeBuild">
+
+    <Exec Command="node --version" ContinueOnError="false">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+      <Error Text="Node.js is not installed." Condition="'$(ErrorCode)' != '0'" />
+
+    <Exec Command="npm install" ContinueOnError="false">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+      <Error Text="npm install failed." Condition="'$(ErrorCode)' != '0'" />
+
+  </Target>
+
+
+  <Target Name="RunTailwind" AfterTargets="AfterBuild">
+    <Exec Command="npm run tree-shake" />
+  </Target>
 </Project>
