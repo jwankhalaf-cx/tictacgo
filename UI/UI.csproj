@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <Target Name="CheckForNpm" BeforeTargets="NpmInstall">
-    <Exec Command="npm -v" ContinueOnError="false">
+    <Exec Command="node --version" ContinueOnError="false">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
     <Error Condition="'$(ErrorCode)' != '0'" Text="You must install node and npm to build this project" />
   </Target>
     
   <Target Name="NpmInstall" BeforeTargets="ProcessCSS" Inputs="package.json" Outputs="$(NpmLastInstall) ">
-    <Exec Command="npm install" />
+    <Exec Command="npm install" ContinueOnError="false" />
     <Touch Files="$(NpmLastInstall)" AlwaysCreate="true" />
   </Target>
   
