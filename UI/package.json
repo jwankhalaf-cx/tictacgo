@@ -4,8 +4,15 @@
   "description": "The UI for TicTacGo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tcss": "npx tailwindcss -i ./Styles/main.css -o ./wwwroot/css/site.css --minify"
   },
   "author": "J Khalaf, B Heci, R Hamza",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "2.8.7",
+    "tailwindcss": "^3.3.1"
+  },
+  "dependencies": {
+    "@tailwindcss/forms": "^0.5.3"
+  }
 }
