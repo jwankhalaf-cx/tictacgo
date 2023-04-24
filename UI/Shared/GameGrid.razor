@@ -1,0 +1,22 @@
+@using TicTacGo.Enums
+
+<div class="bg-indigo-600 grid grid-cols-3 grid-rows-3 gap-2 h-80 w-80 m-2 p-2">
+    @foreach (var cell in GridCells)
+    {
+        <div class="bg-indigo-900 rounded-lg  flex items-center justify-center text-2xl">
+           @if (cell.ToString() == "NotSet")
+           {
+            
+           }else if (cell.ToString() == "X"){
+            <img src="assets/X.svg"/>
+           }else {
+            @cell.ToString()
+           }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Marks[] GridCells { get; set; }
+}
