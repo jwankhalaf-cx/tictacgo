@@ -1,9 +1,11 @@
 @using TicTacGo.Enums
 
 <div class="bg-indigo-600 grid grid-cols-3 grid-rows-3 gap-2 h-80 w-80 m-auto mt-2 mb-2 p-2 rounded-lg">
-    @foreach (var cell in GridCells)
+    @for (int i = 0; i < GridCells.Length; i++)
     {
-        <div class="bg-indigo-900 rounded-lg  flex items-center justify-center">
+        Marks cell = GridCells[i];
+        int Index = i;
+        <button @onclick="((e)=> HandleMark(cell, Index))" class="bg-indigo-900 rounded-lg  flex items-center justify-center cursor-pointer">
            @if (cell.ToString() == "NotSet")
            {
             
@@ -12,11 +14,19 @@
            }else {
             <img src="icons/O.svg" class="w-3/5"/>
            }
-        </div>
+        </button>
     }
 </div>
 
 @code {
     [Parameter]
     public Marks[] GridCells { get; set; }
+    [Parameter]
+    public Marks ActiveMark {get; set;}
+
+    public void HandleMark(Marks cell, int index){
+        if(cell.ToString() == "NotSet"){
+            GridCells[index] = ActiveMark;
+        }
+    }
 }

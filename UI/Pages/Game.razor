@@ -2,9 +2,10 @@
 @using TicTacGo.Enums
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen">
-    <GameGrid GridCells="@ActiveCells" />
+    <GameGrid GridCells="@GridCells" ActiveMark = "@ActiveMark"/>
 </div>
 
 @code {
-    public Marks[] ActiveCells = new Marks[] { Marks.X, Marks.NotSet, Marks.O,Marks.NotSet,Marks.NotSet,Marks.O,Marks.X,Marks.O,Marks.NotSet };
+    public Marks[] GridCells = new Marks[] { Marks.X, Marks.NotSet, Marks.O,Marks.NotSet,Marks.NotSet,Marks.O,Marks.X,Marks.O,Marks.NotSet };
+    public Marks ActiveMark = Marks.X;
 }
