@@ -1,0 +1,27 @@
+
+<div class="user-card bg-indigo-900 h-screen grid content-between justify-items-center p-2">
+
+    <div class="user-img rounded-full overflow-hidden h-80 w-80">
+        <img src="@Image" />
+    </div>
+
+    <div class="user-name text-3xl font-semibold w-31 h-19">
+        <h1 class="text-white">@Name</h1>
+    </div>
+
+    <div class="user-choice h-48 w-30">
+        <img src="@Mark" />
+    </div>
+
+</div>
+
+@code {
+    [Parameter]
+    public string Image { get; set; } = null!;
+
+    [Parameter]
+    public string Name { get; set; } = null!;
+
+    [Parameter]
+    public string Mark {get; set; } = null!;
+}
