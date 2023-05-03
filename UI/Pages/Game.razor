@@ -1,11 +1,56 @@
 @page "/game";
+
+@using Microsoft.AspNetCore.SignalR.Client
 @using TicTacGo.Enums
+@using TicTacGo.Models
+
+@inject NavigationManager Navigation
+
+@implements IAsyncDisposable
+
+<PageTitle>TicTacGo Game</PageTitle>
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen">
-    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" />
+    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@Send" />
 </div>
 
 @code {
+    private HubConnection? hubConnection;
     public Marks[] GridCells = new Marks[] { Marks.X, Marks.NotSet, Marks.O, Marks.NotSet, Marks.NotSet, Marks.O, Marks.X, Marks.O, Marks.NotSet };
     public Marks ActiveMark = Marks.X;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
+            .Build();
+
+        hubConnection.On<CellModel>("ReceiveMove", (model) =>
+        {
+            GridCells[model.CellIndex] = model.SetMark;
+            
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async Task Send(CellModel model)
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("MakeMove", model);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
 }
