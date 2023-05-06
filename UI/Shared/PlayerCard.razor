@@ -1,16 +1,22 @@
-<div class="bg-indigo-900 h-screen grid content-between justify-items-center p-2"> 
-    <div class="rounded-full overflow-hidden h-80 w-80">
-        <img src="@Image" />
-    </div>
-    <div class="text-3xl font-semibold w-31 h-19">
-        <h1 class="text-white">@Name</h1>
-    </div>
-    <div class="h-48 w-30">
-        <img src="@Mark" />
-    </div>
+<div class="bg-indigo-900 h-screen max-w-prose grid content-between justify-items-center rounded-3xl p-2 @CardState(Active)">
+        <div class="rounded-full h-80 w-80">
+            <img src="@Image" />
+        </div>
+        <div class="text-4xl font-semibold w-31 h-19">
+            <h1 class="text-white">@Name</h1>
+        </div>
+        <div class="max-w-full max-h-full h-40 w-40 text-center flex items-center justify-center">
+            <img src="@Mark" class="w-full h-full"/>
+        </div>
 </div>
+<br />
+@if (Active) {
+
+    <div class="text-white text-5xl font-semibold">Your turn</div>
+}
 
 @code {
+
     [Parameter]
     public string Image { get; set; } = null!;
 
@@ -22,4 +28,8 @@
 
     [Parameter]
     public bool Active { get; set; } = false;
+
+    private string CardState(bool Active) {
+        return Active == true ? "border-4 border-white rounded-3xl" : "";
+    }
 }
