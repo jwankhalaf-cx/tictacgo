@@ -1,18 +1,17 @@
-<div class="bg-indigo-900 h-screen max-w-prose grid content-between justify-items-center rounded-3xl p-2 @CardState(Active)">
-        <div class="rounded-full h-80 w-80">
+<div class="bg-indigo-900 w-28 h-48 grid content-between justify-items-center rounded-3xl p-2 @GetActiveStateCssClasses(Active)">
+        <div class="rounded-full h-20 w-20">
             <img src="@Image" />
         </div>
-        <div class="text-4xl font-semibold w-31 h-19">
+        <div class="text font-semibold w-8 h-5">
             <h1 class="text-white">@Name</h1>
         </div>
-        <div class="max-w-full max-h-full h-40 w-40 text-center flex items-center justify-center">
+        <div class="max-w-full max-h-full h-10 w-8 text-center flex items-center justify-center">
             <img src="@Mark" class="w-full h-full"/>
         </div>
 </div>
-<br />
 @if (Active) {
 
-    <div class="text-white text-5xl font-semibold">Your turn</div>
+    <div class="text-white text-lg font-semibold">Your turn</div>
 }
 
 @code {
@@ -29,7 +28,7 @@
     [Parameter]
     public bool Active { get; set; } = false;
 
-    private string CardState(bool Active) {
+    private string GetActiveStateCssClasses(bool Active) {
         return Active == true ? "border-4 border-white rounded-3xl" : "";
     }
 }
