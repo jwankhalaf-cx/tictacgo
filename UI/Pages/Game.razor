@@ -11,7 +11,12 @@
 <PageTitle>TicTacGo Game</PageTitle>
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen">
-    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@Send" />
+    <div class="flex justify-center gap-9">
+        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png" Name="Dan" Mark="icons/x.svg" Active="false"></PlayerCard>
+        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png" Name="Emma" Mark="icons/o.svg" Active="true"></PlayerCard>
+    </div>
+    
+    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@Send"/>
 </div>
 
 @code {
