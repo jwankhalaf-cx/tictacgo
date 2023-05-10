@@ -7,6 +7,10 @@
     <NpmLastInstall>node_modules/.last-install</NpmLastInstall>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
+  </ItemGroup>
+
   <Target Name="CheckForNpm" BeforeTargets="NpmInstall">
     <Exec Command="node --version" ContinueOnError="false">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
