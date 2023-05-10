@@ -16,7 +16,7 @@
         <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png" Name="Emma" Mark="icons/o.svg" Active="true"></PlayerCard>
     </div>
     
-    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@Send"/>
+    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@MakeMove"/>
 </div>
 
 @code {
@@ -43,7 +43,7 @@
     public bool IsConnected =>
         hubConnection?.State == HubConnectionState.Connected;
 
-    public async Task Send(CellModel model)
+    public async Task MakeMove(CellModel model)
     {
         if (hubConnection is not null)
         {
