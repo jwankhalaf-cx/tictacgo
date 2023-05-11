@@ -12,17 +12,30 @@
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen">
     <div class="flex justify-center gap-9">
-        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png" Name="Dan" Mark="icons/x.svg" Active="false"></PlayerCard>
-        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png" Name="Emma" Mark="icons/o.svg" Active="true"></PlayerCard>
+        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png" Name="Dan" Mark="icons/x.svg" Active="@PlayerOne"></PlayerCard>
+        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png" Name="Emma" Mark="icons/o.svg" Active="@PlayerTwo"></PlayerCard>
     </div>
     
-    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@MakeMove"/>
+    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@MakeMove" updateParentActiveMark="@updateActiveMark" />
 </div>
 
 @code {
     private HubConnection? hubConnection;
-    public Marks[] GridCells = new Marks[] { Marks.X, Marks.NotSet, Marks.O, Marks.NotSet, Marks.NotSet, Marks.O, Marks.X, Marks.O, Marks.NotSet };
-    public Marks ActiveMark = Marks.X;
+    public bool PlayerOne = true;
+    public bool PlayerTwo = false;
+    public Marks[] GridCells = new Marks[] { Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet };
+    private Marks ActiveMark = Marks.X;
+
+    private void updateActiveMark (Marks mark) {
+        ActiveMark = mark;
+        if (ActiveMark == Marks.O){
+            PlayerOne = true;
+            PlayerTwo = false;
+        }else {
+            PlayerOne = false;
+            PlayerTwo = true;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
