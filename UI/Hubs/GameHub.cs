@@ -24,7 +24,7 @@ namespace TicTacGo.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task MakeMove(PlayerMoveModel model)
+        public async Task MakeMove(MoveModel model)
         {
             GameBoard[model.CellIndex] = model.SetMark;
 

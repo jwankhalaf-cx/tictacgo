@@ -8,7 +8,5 @@ namespace TicTacGo.Models {
     public string ImageUrl { get; set; }
 
     public Marks Mark { get; set; }
-
-    public bool HasTurn { get; set; }
   }
 }

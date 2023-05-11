@@ -27,7 +27,7 @@
     public EventCallback<Marks> UpdateParentActiveMark { get; set; }
 
     [Parameter]
-    public EventCallback<PlayerMoveModel> OnClickFunction { get; set; }
+    public EventCallback<MoveModel> OnClickFunction { get; set; }
 
     private void UpdateActiveMark (Marks mark) {
         UpdateParentActiveMark.InvokeAsync(ActiveMark);
@@ -36,7 +36,7 @@
     public void PlaceMark(Marks cell, int index) {
         GridCells[index] = ActiveMark;
 
-        PlayerMoveModel model = new PlayerMoveModel
+        MoveModel model = new MoveModel
         {
           SetMark = ActiveMark,
           CellIndex = index

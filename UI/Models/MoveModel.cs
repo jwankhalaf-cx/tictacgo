@@ -2,7 +2,7 @@ using TicTacGo.Enums;
 
 namespace TicTacGo.Models
 {
-    public class PlayerMoveModel
+    public class MoveModel
     {
         public string PlayerId { get; set; }
         

@@ -29,7 +29,6 @@
       Name = "Dan",
       ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
       Mark = Marks.X,
-      HasTurn = true
     };
 
     PlayerModel PlayerTwo = new PlayerModel
@@ -37,7 +36,6 @@
       Name = "Emma",
       ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
       Mark = Marks.O,
-      HasTurn = false
     };
 
     private void UpdateActiveMark(Marks mark) {
@@ -64,7 +62,7 @@
             InvokeAsync(StateHasChanged);
         });
 
-        hubConnection.On<PlayerMoveModel>("ReceiveMove", (model) =>
+        hubConnection.On<MoveModel>("ReceiveMove", (model) =>
         {
             GameBoard[model.CellIndex] = model.SetMark;
             ActiveMark = model.NextMark;
@@ -78,7 +76,7 @@
     public bool IsConnected =>
         hubConnection?.State == HubConnectionState.Connected;
 
-    public async Task MakeMove(PlayerMoveModel model)
+    public async Task MakeMove(MoveModel model)
     {
         if (hubConnection is not null)
         {
