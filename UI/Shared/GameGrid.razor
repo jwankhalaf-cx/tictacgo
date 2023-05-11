@@ -24,32 +24,25 @@
     public Marks ActiveMark {get; set;}
 
     [Parameter]
-    public EventCallback<Marks> updateParentActiveMark {get; set;}
+    public EventCallback<Marks> UpdateParentActiveMark { get; set; }
 
     [Parameter]
-    public EventCallback<CellModel> OnClickFunction { get; set; }
+    public EventCallback<PlayerMoveModel> OnClickFunction { get; set; }
 
-    private void updateActiveMark (Marks mark) {
-        ActiveMark = mark;
-        updateParentActiveMark.InvokeAsync(ActiveMark);
+    private void UpdateActiveMark (Marks mark) {
+        UpdateParentActiveMark.InvokeAsync(ActiveMark);
     }
         
     public void PlaceMark(Marks cell, int index) {
-        Console.WriteLine(ActiveMark);
-        if (cell == Marks.NotSet) {
-            GridCells[index] = ActiveMark;
-            if (ActiveMark == Marks.O) {
-                ActiveMark = Marks.X;
-            }else {
-                ActiveMark = Marks.O;
-            }
-            updateActiveMark(ActiveMark);
-            Console.WriteLine(ActiveMark);
-        }
-        CellModel model = new CellModel();
-        model.SetMark = ActiveMark;
-        model.CellIndex = index;
+        GridCells[index] = ActiveMark;
+
+        PlayerMoveModel model = new PlayerMoveModel
+        {
+          SetMark = ActiveMark,
+          CellIndex = index
+        };
 
         OnClickFunction.InvokeAsync(model);
+        UpdateActiveMark(ActiveMark);
     }
 }
