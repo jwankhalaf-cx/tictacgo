@@ -12,17 +12,42 @@
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen pb-8 pt-40">
     <div class="flex justify-center gap-9 pb-6">
-        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png" Name="Dan" Mark="icons/x.svg" Active="false"></PlayerCard>
-        <PlayerCard Image="https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png" Name="Emma" Mark="icons/o.svg" Active="true"></PlayerCard>
+        <PlayerCard Player="@PlayerOne" ActiveMark="@ActiveMark" />
+        <PlayerCard Player="@PlayerTwo" ActiveMark="@ActiveMark" />
     </div>
     
-    <GameGrid GridCells="@GridCells" ActiveMark="@ActiveMark" OnClickFunction="@MakeMove"/>
+    <GameGrid GridCells="@GameBoard" ActiveMark="@ActiveMark" OnClickFunction="@MakeMove" UpdateParentActiveMark="@UpdateActiveMark" />
 </div>
 
 @code {
     private HubConnection? hubConnection;
-    public Marks[] GridCells = new Marks[] { Marks.X, Marks.NotSet, Marks.O, Marks.NotSet, Marks.NotSet, Marks.O, Marks.X, Marks.O, Marks.NotSet };
-    public Marks ActiveMark = Marks.X;
+    public Marks[] GameBoard = new Marks[9];
+    private Marks ActiveMark = Marks.X;
+
+    PlayerModel PlayerOne = new PlayerModel
+    {
+      Name = "Dan",
+      ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
+      Mark = Marks.X,
+    };
+
+    PlayerModel PlayerTwo = new PlayerModel
+    {
+      Name = "Emma",
+      ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
+      Mark = Marks.O,
+    };
+
+    private void UpdateActiveMark(Marks mark) {
+        if (mark == Marks.X)
+        {
+          ActiveMark = Marks.O;
+        }
+        else
+        {
+          ActiveMark = Marks.X;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,9 +55,17 @@
             .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
             .Build();
 
-        hubConnection.On<CellModel>("ReceiveMove", (model) =>
+        hubConnection.On<Marks[]>("DrawGameBoard", (model) =>
         {
-            GridCells[model.CellIndex] = model.SetMark;
+            GameBoard = model;
+            
+            InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On<MoveModel>("ReceiveMove", (model) =>
+        {
+            GameBoard[model.CellIndex] = model.SetMark;
+            ActiveMark = model.NextMark;
             
             InvokeAsync(StateHasChanged);
         });
@@ -43,7 +76,7 @@
     public bool IsConnected =>
         hubConnection?.State == HubConnectionState.Connected;
 
-    public async Task MakeMove(CellModel model)
+    public async Task MakeMove(MoveModel model)
     {
         if (hubConnection is not null)
         {
