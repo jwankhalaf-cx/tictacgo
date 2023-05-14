@@ -22,7 +22,7 @@ var app = builder.Build();
 
 app.UseResponseCompression();
 
-// Configure the HTTP request pipeline.
+// configure the https request pipeline.
 if (!app.Environment.IsDevelopment())
 {
   app.UseExceptionHandler("/Error");
