@@ -1,9 +1,8 @@
-namespace TicTacGo.Enums
+namespace UI.Enums;
+
+public enum Marks
 {
-    public enum Marks
-    {
-        X,
-        O,
-        NotSet
-    }
+  X,
+  O,
+  NotSet
 }

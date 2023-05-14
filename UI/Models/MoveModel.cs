@@ -1,26 +1,14 @@
-using TicTacGo.Enums;
+using UI.Enums;
 
-namespace TicTacGo.Models
+namespace UI.Models;
+
+public class MoveModel
 {
-    public class MoveModel
-    {
-        public string PlayerId { get; set; }
-        
-        public int CellIndex { get; set; }
+  public int CellIndex { get; init; }
 
-        public Marks SetMark { get; set; }
+  public Marks SetMark { get; init; }
 
-        public Marks NextMark
-        {
-          get
-          {
-            if (SetMark == Marks.X)
-            {
-              return Marks.O;
-            }
+  public required string ActivePlayerClientConnectionId { get; set; }
 
-            return Marks.X;
-          }
-        }
-    }
+  public Marks NextMark => SetMark == Marks.X ? Marks.O : Marks.X;
 }

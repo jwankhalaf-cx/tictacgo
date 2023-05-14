@@ -1,12 +1,12 @@
-using TicTacGo.Enums;
+using UI.Enums;
 
-namespace TicTacGo.Models {
-  public class PlayerModel
-  {
-    public string Name { get; set; }
+namespace UI.Models;
 
-    public string ImageUrl { get; set; }
+public class PlayerModel
+{
+  public required string Name { get; init; }
 
-    public Marks Mark { get; set; }
-  }
+  public required string ImageUrl { get; init; }
+
+  public required Marks Mark { get; init; }
 }

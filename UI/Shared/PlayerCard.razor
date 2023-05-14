@@ -1,42 +1,44 @@
-@using TicTacGo.Enums
-@using TicTacGo.Models
-
+@using UI.Models
+@using UI.Enums
 <div class="grid justify-items-center mb-5">
-    <div class="bg-indigo-950 w-28 h-48 grid content-between justify-items-center justify-center rounded-xl p-1 @GetActiveStateCssClasses()">
-        <div class="rounded-full min-w-ful h-20 w-20 max-w-max mx-2">
-            <img src="@Player.ImageUrl" />
-        </div>
-
-        <div class="grid content-center text font-semibold w-12 h-9 max-w-max">
-            <h1 class="text-white text-center outline-0">@Player.Name</h1>
-        </div>
-
-        <div class="max-w-full max-h-full h-12 w-8 text-center flex items-center justify-center">
-            @if (Player.Mark == Marks.X)
-            {
-                <img src="icons/x.svg" class="w-full h-full" alt="X mark" />
-            }
-            else
-            {
-                <img src="icons/o.svg" class="w-full h-full" alt="O mark" />
-            }
-        </div>
+  <div class="bg-indigo-950 w-28 h-48 grid content-between justify-items-center justify-center rounded-xl p-1 @GetActiveStateCssClasses()">
+    <div class="rounded-full min-w-ful h-20 w-20 max-w-max mx-2">
+      <img src="@Player.ImageUrl" alt="@Player.Name's photo"/>
     </div>
-    
-    @if (Player.Mark == ActiveMark) 
-    {
-      <div class="text-white text-lg font-semibold text-center mt-2">Your turn</div>
-    }
+
+    <div class="grid content-center text font-semibold w-12 h-9 max-w-max">
+      <h1 class="text-white text-center outline-0">@Player.Name</h1>
+    </div>
+
+    <div class="max-w-full max-h-full h-12 w-8 text-center flex items-center justify-center">
+      @if (Player.Mark == Marks.X)
+      {
+        <img src="icons/x.svg" class="w-full h-full" alt="X mark"/>
+      }
+      else
+      {
+        <img src="icons/o.svg" class="w-full h-full" alt="O mark"/>
+      }
+    </div>
+  </div>
+
+  @if (Player.Mark == ActiveMark)
+  {
+    <div class="text-white text-lg font-semibold text-center mt-2">Your turn</div>
+  }
 </div>
 
 @code {
-    [Parameter]
-    public PlayerModel Player { get; set; }
 
-    [Parameter]
-    public Marks ActiveMark { get; set; }
+  [Parameter]
+  public required PlayerModel Player { get; set; }
 
-    private string GetActiveStateCssClasses() {
-        return Player.Mark == ActiveMark ? "border-2 border-white" : "";
-    }
+  [Parameter]
+  public Marks ActiveMark { get; set; }
+
+  private string GetActiveStateCssClasses()
+  {
+    return Player.Mark == ActiveMark ? "border-2 border-white" : "";
+  }
+
 }
