@@ -10,9 +10,14 @@
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen pb-8 pt-40">
   <div class="flex justify-center gap-9 pb-6">
-    @foreach (var player in _players)
+    @if (_host is not null)
     {
-      <PlayerCard Player="@player" ActiveMark="@_activeMark" HasTurn="@HasTurn"/>
+      <PlayerCard Player="@_host" ActiveMark="@_activeMark" />
+    }
+
+    @if (_guest is not null)
+    {
+      <PlayerCard Player="@_guest" ActiveMark="@_activeMark" />
     }
   </div>
 
@@ -30,7 +35,9 @@
 
   private HubConnection? _hubConnection;
   private readonly List<Player> _players = new();
-  private readonly Marks[] _gameBoard = { Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet };
+  private Marks[] _gameBoard = new Marks[9];
+  private Player? _host;
+  private Player? _guest;
   private Marks _activeMark = Marks.X;
   private bool HasTurn { get; set; } = true;
   private readonly string _activePlayerClientConnectionId = string.Empty;
@@ -42,32 +49,18 @@
     _hubConnection = new HubConnectionBuilder()
       .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
       .Build();
-
-    _hubConnection.On("GiveTurn", () =>
+    
+    _hubConnection.On<Models.Game>("RenderGame", game =>
     {
-      HasTurn = true;
+      Console.WriteLine($"RenderGame being called on {_hubConnection.ConnectionId} with game as: {game}");
+      
+      _gameBoard = game.GetBoard();
+      _host = game.Host;
 
-      InvokeAsync(StateHasChanged);
-    });
-
-    _hubConnection.On<MoveModel>("ReceiveMove", model =>
-    {
-      _gameBoard[model.CellIndex] = model.SetMark;
-      _activeMark = model.NextMark;
-
-      InvokeAsync(StateHasChanged);
-    });
-
-    _hubConnection.On<Player>("AddPlayer", model =>
-    {
-      _players.Add(model);
-
-      InvokeAsync(StateHasChanged);
-    });
-
-    _hubConnection.On<Player>("RemovePlayer", model =>
-    {
-      _players.Remove(model);
+      if (game.CanStart())
+      {
+        _guest = game.Guest;
+      }
 
       InvokeAsync(StateHasChanged);
     });
@@ -78,23 +71,11 @@
   public bool IsConnected =>
     _hubConnection?.State == HubConnectionState.Connected;
 
-  private async Task MakeMove(MoveModel model)
+  private async Task MakeMove(Move model)
   {
     if (_hubConnection is not null)
     {
-      await _hubConnection.SendAsync("MakeMove", model);
-    }
-
-    await GrantTurn();
-  }
-
-  private async Task GrantTurn()
-  {
-    HasTurn = false;
-
-    if (_hubConnection is not null)
-    {
-      await _hubConnection.SendAsync("GiveTurn");
+      await _hubConnection.SendAsync("MakeMove", GameCode, model);
     }
   }
 

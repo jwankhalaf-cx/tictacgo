@@ -20,33 +20,44 @@ public class GameHub : Hub
 
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      _gameEngineService.AddPlayerToGame(gameCode, Context.ConnectionId);
+      bool gameExists = _gameEngineService.GameExists(gameCode);
 
-      if (!_gameEngineService.GameIsFull(gameCode))
+      if (gameExists)
       {
-        await GiveTurn();
-
-        Player playerOne = new()
-        {
-          ConnectionId = Context.ConnectionId,
-          Name = "Dan",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
-          Mark = Marks.X
-        };
-
-        await JoinGame(playerOne);
-      }
-      else
-      {
-        Player playerTwo = new()
+        Player guest = new()
         {
           ConnectionId = Context.ConnectionId,
           Name = "Emma",
           ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-          Mark = Marks.O
+          Mark = Marks.O,
+          HasTurn = false,
         };
+        
+        _gameEngineService.JoinGame(gameCode, guest);
+      }
+      else
+      {
+        Player host = new()
+        {
+          ConnectionId = Context.ConnectionId,
+          Name = "Dan",
+          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
+          Mark = Marks.X,
+          HasTurn = true,
+        };
+        
+        _gameEngineService.StartGame(gameCode, host);
+      }
 
-        await JoinGame(playerTwo);
+      Game? game = _gameEngineService.GetGame(gameCode);
+
+      if (game is not null)
+      {
+        await Clients.All.SendAsync("RenderGame", game);
+      }
+      else
+      {
+        await Clients.All.SendAsync("ShowError", "game not found");
       }
 
       await base.OnConnectedAsync();
@@ -59,32 +70,17 @@ public class GameHub : Hub
 
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      _gameEngineService.RemovePlayerFromGame(gameCode, Context.ConnectionId);
-
-      await LeaveGame(new Player
-        { ConnectionId = Context.ConnectionId, Name = "", ImageUrl = "", Mark = Marks.NotSet });
-
       await base.OnDisconnectedAsync(exception);
     }
   }
 
-  public async Task GiveTurn()
+  public async Task MakeMove(string gameCode, Move model)
   {
-    await Clients.Others.SendAsync("GiveTurn");
-  }
+    Game? game = _gameEngineService.MakeMove(gameCode, model);
 
-  private async Task JoinGame(Player model)
-  {
-    await Clients.All.SendAsync("AddPlayer", model);
-  }
-
-  private async Task LeaveGame(Player model)
-  {
-    await Clients.All.SendAsync("RemovePlayer", model);
-  }
-
-  public async Task MakeMove(MoveModel model)
-  {
-    await Clients.Others.SendAsync("ReceiveMove", model);
+    if (game is not null)
+    {
+      await Clients.All.SendAsync("RenderGame", game);
+    }
   }
 }

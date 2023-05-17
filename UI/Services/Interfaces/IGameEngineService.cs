@@ -1,10 +1,16 @@
+using UI.Models;
+
 namespace UI.Services.Interfaces;
 
 public interface IGameEngineService
 {
-  bool GameIsFull(string gameCode);
+  bool GameExists(string gameCode);
 
-  void AddPlayerToGame(string gameCode, string playerConnectionId);
+  void StartGame(string gameCode, Player host);
 
-  void RemovePlayerFromGame(string gameCode, string playerConnectionId);
+  void JoinGame(string gameCode, Player guest);
+
+  Game? GetGame(string gameCode);
+
+  Game? MakeMove(string gameCode, Move move);
 }

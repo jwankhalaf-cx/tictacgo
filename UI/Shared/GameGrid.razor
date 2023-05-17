@@ -27,7 +27,7 @@
   public Marks ActiveMark { get; set; }
 
   [Parameter]
-  public EventCallback<MoveModel> OnClickFunction { get; set; }
+  public EventCallback<Move> OnClickFunction { get; set; }
 
   [Parameter]
   public required string ActivePlayerClientConnectionId { get; set; }
@@ -39,10 +39,10 @@
   {
     GridCells[index] = ActiveMark;
 
-    var model = new MoveModel
+    var model = new Move
     {
-      SetMark = ActiveMark,
-      CellIndex = index
+      Mark = ActiveMark,
+      Index = index
     };
 
     OnClickFunction.InvokeAsync(model);

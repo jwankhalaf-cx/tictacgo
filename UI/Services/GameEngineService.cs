@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Caching.Memory;
+using UI.Models;
 using UI.Services.Interfaces;
 
 namespace UI.Services;
 
 public class GameEngineService : IGameEngineService
 {
-  private readonly IDictionary<string, List<string>> _games = new Dictionary<string, List<string>>();
   private readonly IMemoryCache _memoryCache;
 
   public GameEngineService(IMemoryCache memoryCache)
@@ -13,42 +13,48 @@ public class GameEngineService : IGameEngineService
     _memoryCache = memoryCache;
   }
 
-  public bool GameIsFull(string gameCode)
+  public bool GameExists(string gameCode)
   {
-    if (_games.TryGetValue(gameCode, out var players)) return players.Count == 2;
+    _memoryCache.TryGetValue(gameCode, out Game? game);
 
-    return false;
+    return game is not null;
   }
 
-  public void AddPlayerToGame(string gameCode, string playerConnectionId)
+  public void StartGame(string gameCode, Player host)
   {
-    if (_games.ContainsKey(gameCode))
-    {
-      var players = _games[gameCode];
+    Game game = new Game(gameCode, host);
 
-      if (players.Count >= 2 || players.Contains(playerConnectionId)) return;
-
-      players.Add(playerConnectionId);
-
-      _games[gameCode] = players;
-    }
-    else
-    {
-      _games[gameCode] = new List<string> { playerConnectionId };
-    }
+    _memoryCache.Set(gameCode, game);
   }
 
-  public void RemovePlayerFromGame(string gameCode, string playerConnectionId)
+  public void JoinGame(string gameCode, Player guest)
   {
-    if (!_games.ContainsKey(gameCode)) throw new Exception("cannot remove player his game doesn't exist!");
+    if (!GameExists(gameCode)) return;
+    
+    Game? game = GetGame(gameCode);
 
-    var players = _games[gameCode];
+    if (game == null || game.CanStart()) return;
+    
+    game.AddGuest(guest);
 
-    if (!players.Contains(playerConnectionId))
-      throw new Exception("cannot remove player as player isn't present in the game!");
+    _memoryCache.Set(gameCode, game);
+  }
 
-    players.Remove(playerConnectionId);
+  public Game? GetGame(string gameCode)
+  {
+    _memoryCache.TryGetValue(gameCode, out Game? game);
 
-    _games[gameCode] = players;
+    return game;
+  }
+
+  public Game? MakeMove(string gameCode, Move move)
+  {
+    Game? game = GetGame(gameCode);
+
+    game?.Move(move);
+
+    _memoryCache.Set(gameCode, game);
+
+    return game;
   }
 }

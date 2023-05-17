@@ -1,3 +1,4 @@
+using System.Text;
 using UI.Enums;
 
 namespace UI.Models;
@@ -11,14 +12,18 @@ public class Player
   public required string ImageUrl { get; init; }
 
   public required Marks Mark { get; init; }
-
-  protected bool Equals(Player other)
+  
+  public bool HasTurn { get; set; }
+  
+  public override string ToString()
   {
-    return ConnectionId == other.ConnectionId;
-  }
+    StringBuilder stringBuilder = new StringBuilder($"Connection Id: {ConnectionId} | ");
+    stringBuilder.Append($"Name: {Name} | ");
+    stringBuilder.Append($"ImageUrl: {ImageUrl} | ");
+    string markAsString = Mark == Marks.X ? "X" : "O";
+    stringBuilder.Append($"Mark: {markAsString} | ");
+    stringBuilder.Append($"HasTurn: {HasTurn.ToString()} | ");
 
-  public override int GetHashCode()
-  {
-    return HashCode.Combine(ConnectionId, Name, ImageUrl, (int)Mark);
+    return stringBuilder.ToString();
   }
 }

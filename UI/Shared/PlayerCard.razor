@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div class="text-white text-lg font-semibold text-center mt-2 @(!HasTurn ? "invisible" : "")">Your turn</div>
+  <div class="text-white text-lg font-semibold text-center mt-2 @(!Player.HasTurn ? "invisible" : "")">Your turn</div>
 </div>
 
 @code {
@@ -31,14 +31,11 @@
   public required Player Player { get; set; }
 
   [Parameter]
-  public required bool HasTurn { get; set; }
-
-  [Parameter]
   public Marks ActiveMark { get; set; }
 
   private string GetActiveStateCssClasses()
   {
-    return HasTurn ? "border-2 border-white" : "";
+    return Player.HasTurn ? "border-2 border-white" : "";
   }
 
 }
