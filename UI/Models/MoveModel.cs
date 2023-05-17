@@ -8,7 +8,5 @@ public class MoveModel
 
   public Marks SetMark { get; init; }
 
-  public required string ActivePlayerClientConnectionId { get; set; }
-
   public Marks NextMark => SetMark == Marks.X ? Marks.O : Marks.X;
 }

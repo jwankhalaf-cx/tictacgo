@@ -1,64 +1,51 @@
-@page "/game";
+@page "/game/{gameCode}";
 
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.SignalR.Client
-@using UI.Enums
 @using UI.Models
+@using UI.Enums
 @implements IAsyncDisposable
 
 <PageTitle>TicTacGo Game</PageTitle>
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen pb-8 pt-40">
   <div class="flex justify-center gap-9 pb-6">
-    <PlayerCard Player="@_playerOne" ActiveMark="@_activeMark"/>
-    <PlayerCard Player="@_playerTwo" ActiveMark="@_activeMark"/>
+    @foreach (var player in _players)
+    {
+      <PlayerCard Player="@player" ActiveMark="@_activeMark" HasTurn="@HasTurn"/>
+    }
   </div>
 
   <GameGrid
     GridCells="@_gameBoard"
     ActiveMark="@_activeMark"
     OnClickFunction="@MakeMove"
-    UpdateParentActiveMark="@UpdateActiveMark"
-    ConnectionId="@_connectionId"
     ActivePlayerClientConnectionId="@_activePlayerClientConnectionId"/>
 </div>
 
 @code {
+
+  [Parameter]
+  public string GameCode { get; set; } = "";
+
   private HubConnection? _hubConnection;
-  private Marks[] _gameBoard = new Marks[9];
+  private readonly List<Player> _players = new();
+  private readonly Marks[] _gameBoard = { Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet };
   private Marks _activeMark = Marks.X;
-  private string _connectionId = string.Empty;
-  private string _activePlayerClientConnectionId = string.Empty;
-
-  readonly PlayerModel _playerOne = new()
-  {
-    Name = "Dan",
-    ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
-    Mark = Marks.X
-  };
-
-  readonly PlayerModel _playerTwo = new()
-  {
-    Name = "Emma",
-    ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-    Mark = Marks.O
-  };
-
-  private void UpdateActiveMark(Marks mark)
-  {
-    _activeMark = mark == Marks.X ? Marks.O : Marks.X;
-  }
+  private bool HasTurn { get; set; } = true;
+  private readonly string _activePlayerClientConnectionId = string.Empty;
 
   protected override async Task OnInitializedAsync()
   {
+    Console.WriteLine("Initialized Game.razor!");
+
     _hubConnection = new HubConnectionBuilder()
-      .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
+      .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
       .Build();
 
-    _hubConnection.On<Marks[], string>("DrawGameBoard", (gameBoard, connectionId) =>
+    _hubConnection.On("GiveTurn", () =>
     {
-      _gameBoard = gameBoard;
-      _activePlayerClientConnectionId = connectionId;
+      HasTurn = true;
 
       InvokeAsync(StateHasChanged);
     });
@@ -71,10 +58,21 @@
       InvokeAsync(StateHasChanged);
     });
 
-    await _hubConnection.StartAsync();
+    _hubConnection.On<Player>("AddPlayer", model =>
+    {
+      _players.Add(model);
 
-    if (_hubConnection.ConnectionId != null) _connectionId = _hubConnection.ConnectionId;
-    Console.WriteLine(_connectionId);
+      InvokeAsync(StateHasChanged);
+    });
+
+    _hubConnection.On<Player>("RemovePlayer", model =>
+    {
+      _players.Remove(model);
+
+      InvokeAsync(StateHasChanged);
+    });
+
+    await _hubConnection.StartAsync();
   }
 
   public bool IsConnected =>
@@ -85,6 +83,18 @@
     if (_hubConnection is not null)
     {
       await _hubConnection.SendAsync("MakeMove", model);
+    }
+
+    await GrantTurn();
+  }
+
+  private async Task GrantTurn()
+  {
+    HasTurn = false;
+
+    if (_hubConnection is not null)
+    {
+      await _hubConnection.SendAsync("GiveTurn");
     }
   }
 

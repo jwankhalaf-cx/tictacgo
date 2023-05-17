@@ -22,23 +22,23 @@
     </div>
   </div>
 
-  @if (Player.Mark == ActiveMark)
-  {
-    <div class="text-white text-lg font-semibold text-center mt-2">Your turn</div>
-  }
+  <div class="text-white text-lg font-semibold text-center mt-2 @(!HasTurn ? "invisible" : "")">Your turn</div>
 </div>
 
 @code {
 
   [Parameter]
-  public required PlayerModel Player { get; set; }
+  public required Player Player { get; set; }
+
+  [Parameter]
+  public required bool HasTurn { get; set; }
 
   [Parameter]
   public Marks ActiveMark { get; set; }
 
   private string GetActiveStateCssClasses()
   {
-    return Player.Mark == ActiveMark ? "border-2 border-white" : "";
+    return HasTurn ? "border-2 border-white" : "";
   }
 
 }

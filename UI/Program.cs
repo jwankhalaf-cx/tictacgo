@@ -34,7 +34,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
-app.MapHub<GameHub>("/gamehub");
+app.MapHub<GameHub>("/gamehub/{GameCode}");
 app.MapFallbackToPage("/_Host");
 
 app.Run();

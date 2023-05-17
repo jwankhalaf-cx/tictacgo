@@ -2,7 +2,9 @@ namespace UI.Services.Interfaces;
 
 public interface IGameEngineService
 {
-  void IncrementCounter();
+  bool GameIsFull(string gameCode);
 
-  int GetCount();
+  void AddPlayerToGame(string gameCode, string playerConnectionId);
+
+  void RemovePlayerFromGame(string gameCode, string playerConnectionId);
 }

@@ -27,41 +27,25 @@
   public Marks ActiveMark { get; set; }
 
   [Parameter]
-  public EventCallback<Marks> UpdateParentActiveMark { get; set; }
-
-  [Parameter]
   public EventCallback<MoveModel> OnClickFunction { get; set; }
-
-  [Parameter]
-  public required string ConnectionId { get; set; }
 
   [Parameter]
   public required string ActivePlayerClientConnectionId { get; set; }
 
-  private void UpdateActiveMark(Marks mark)
-  {
-    UpdateParentActiveMark.InvokeAsync(ActiveMark);
-  }
+  [Parameter]
+  public bool HasTurn { get; set; }
 
   private void PlaceMark(Marks cell, int index)
   {
-    Console.WriteLine("Inside PlaceMark");
-    Console.WriteLine($"ConnectionId: {ConnectionId}");
-    Console.WriteLine($"ActivePlayerClientConnectionId: {ActivePlayerClientConnectionId}");
-
-    if (ConnectionId != ActivePlayerClientConnectionId) return;
-
     GridCells[index] = ActiveMark;
 
     var model = new MoveModel
     {
       SetMark = ActiveMark,
-      CellIndex = index,
-      ActivePlayerClientConnectionId = ConnectionId
+      CellIndex = index
     };
 
     OnClickFunction.InvokeAsync(model);
-    UpdateActiveMark(ActiveMark);
   }
 
 }
