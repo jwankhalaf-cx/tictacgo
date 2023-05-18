@@ -1,7 +1,7 @@
 using System.Text;
 using UI.Enums;
 
-namespace UI.Models;
+namespace UI.Entities;
 
 public class Player
 {
@@ -13,5 +13,5 @@ public class Player
 
   public required Marks Mark { get; init; }
 
-  public bool HasTurn { get; init; }
+  public bool HasTurn { get; set; }
 }

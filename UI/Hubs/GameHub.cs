@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using UI.Enums;
+using UI.Mappers;
 using UI.Models;
 using UI.Services.Interfaces;
 
@@ -8,23 +9,25 @@ namespace UI.Hubs;
 public class GameHub : Hub
 {
   private readonly IGameEngineService _gameEngineService;
+  private readonly IConverter<Entities.Game, Game> _gameMapper;
 
-  public GameHub(IGameEngineService gameEngineService)
+  public GameHub(
+    IGameEngineService gameEngineService,
+    IConverter<Entities.Game, Game> gameMapper)
   {
     _gameEngineService = gameEngineService;
+    _gameMapper = gameMapper;
   }
 
   public override async Task OnConnectedAsync()
   {
-    Console.WriteLine($"OnConnectedAsync fired, Client Connection Id is: {Context.ConnectionId}");
-
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
       bool gameExists = _gameEngineService.GameExists(gameCode);
 
       if (gameExists)
       {
-        Player guest = new()
+        Entities.Player guest = new()
         {
           ConnectionId = Context.ConnectionId,
           Name = "Emma",
@@ -37,7 +40,7 @@ public class GameHub : Hub
       }
       else
       {
-        Player host = new()
+        Entities.Player host = new()
         {
           ConnectionId = Context.ConnectionId,
           Name = "Dan",
@@ -49,12 +52,18 @@ public class GameHub : Hub
         _gameEngineService.StartGame(gameCode, host);
       }
 
-      Game? game = _gameEngineService.GetGame(gameCode);
+      Entities.Game? game = _gameEngineService.GetGame(gameCode);
 
       if (game is not null)
-        await Clients.All.SendAsync("RenderGame", game);
+      {
+        Game gameDto = _gameMapper.Convert(game);
+
+        await Clients.All.SendAsync("RenderGame", gameDto);
+      }
       else
+      {
         await Clients.All.SendAsync("ShowError", "game not found");
+      }
 
       await base.OnConnectedAsync();
     }
@@ -62,8 +71,6 @@ public class GameHub : Hub
 
   public override async Task OnDisconnectedAsync(Exception? exception)
   {
-    Console.WriteLine($"OnDisconnectedAsync fired, Client Connection Id is: {Context.ConnectionId}");
-
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
       _gameEngineService.LeaveGame(gameCode, Context.ConnectionId);
@@ -74,8 +81,13 @@ public class GameHub : Hub
 
   public async Task MakeMove(string gameCode, Move model)
   {
-    Game? game = _gameEngineService.MakeMove(gameCode, model);
+    Entities.Game? game = _gameEngineService.MakeMove(gameCode, model);
 
-    if (game is not null) await Clients.All.SendAsync("RenderGame", game);
+    if (game is not null)
+    {
+      Game gameDto = _gameMapper.Convert(game);
+
+      await Clients.All.SendAsync("RenderGame", gameDto);
+    }
   }
 }

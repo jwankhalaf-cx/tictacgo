@@ -34,32 +34,35 @@
   public string GameCode { get; set; } = "";
 
   private HubConnection? _hubConnection;
-  private readonly List<Player> _players = new();
-  private Marks[] _gameBoard = new Marks[9];
+  private Marks[]? _gameBoard;
   private Player? _host;
   private Player? _guest;
-  private Marks _activeMark = Marks.X;
-  private bool HasTurn { get; set; } = true;
+  private Marks _activeMark;
   private readonly string _activePlayerClientConnectionId = string.Empty;
 
   protected override async Task OnInitializedAsync()
   {
-    Console.WriteLine("Initialized Game.razor!");
-
     _hubConnection = new HubConnectionBuilder()
       .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
       .Build();
 
     _hubConnection.On<Models.Game>("RenderGame", game =>
     {
-      Console.WriteLine($"RenderGame being called on {_hubConnection.ConnectionId}");
-
-      _gameBoard = game.GetBoard();
+      _gameBoard = game.Board;
       _host = game.Host;
 
-      if (game.CanStart())
+      if (game.Guest is not null)
       {
         _guest = game.Guest;
+      }
+
+      if (_host is not null && _host.HasTurn)
+      {
+        _activeMark = _host.Mark;
+      }
+      else if (_guest is not null && _guest.HasTurn)
+      {
+        _activeMark = _guest.Mark;
       }
 
       InvokeAsync(StateHasChanged);
@@ -73,10 +76,27 @@
 
   private async Task MakeMove(Move model)
   {
-    if (_hubConnection is not null)
+    if (CanMakeMove())
     {
-      await _hubConnection.SendAsync("MakeMove", GameCode, model);
+      if (_hubConnection is not null)
+      {
+        if (_hubConnection.ConnectionId != null) model.ConnectionId = _hubConnection.ConnectionId;
+
+        await _hubConnection.SendAsync("MakeMove", GameCode, model);
+      }
     }
+  }
+
+  private bool CanMakeMove()
+  {
+    if (_host is null || _guest is null) return false;
+
+    if (_host.HasTurn && _host.ConnectionId == _hubConnection?.ConnectionId)
+    {
+      return true;
+    }
+
+    return _guest.HasTurn && _guest.ConnectionId == _hubConnection?.ConnectionId;
   }
 
   public async ValueTask DisposeAsync()

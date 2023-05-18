@@ -6,13 +6,13 @@ public interface IGameEngineService
 {
   bool GameExists(string gameCode);
 
-  void StartGame(string gameCode, Player host);
+  void StartGame(string gameCode, Entities.Player host);
 
-  void JoinGame(string gameCode, Player guest);
+  void JoinGame(string gameCode, Entities.Player guest);
 
   void LeaveGame(string gameCode, string connectionId);
 
-  Game? GetGame(string gameCode);
+  Entities.Game? GetGame(string gameCode);
 
-  Game? MakeMove(string gameCode, Move move);
+  Entities.Game? MakeMove(string gameCode, Move move);
 }

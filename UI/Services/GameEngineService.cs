@@ -15,23 +15,23 @@ public class GameEngineService : IGameEngineService
 
   public bool GameExists(string gameCode)
   {
-    _memoryCache.TryGetValue(gameCode, out Game? game);
+    _memoryCache.TryGetValue(gameCode, out Entities.Game? game);
 
     return game is not null;
   }
 
-  public void StartGame(string gameCode, Player host)
+  public void StartGame(string gameCode, Entities.Player host)
   {
-    Game game = new Game(gameCode, host);
+    Entities.Game game = new Entities.Game(gameCode, host);
 
     _memoryCache.Set(gameCode, game);
   }
 
-  public void JoinGame(string gameCode, Player guest)
+  public void JoinGame(string gameCode, Entities.Player guest)
   {
     if (!GameExists(gameCode)) return;
 
-    Game? game = GetGame(gameCode);
+    Entities.Game? game = GetGame(gameCode);
 
     if (game == null || game.CanStart()) return;
 
@@ -42,21 +42,21 @@ public class GameEngineService : IGameEngineService
 
   public void LeaveGame(string gameCode, string connectionId)
   {
-    Game? game = GetGame(gameCode);
+    Entities.Game? game = GetGame(gameCode);
 
     game?.RemovePlayer(connectionId);
   }
 
-  public Game? GetGame(string gameCode)
+  public Entities.Game? GetGame(string gameCode)
   {
-    _memoryCache.TryGetValue(gameCode, out Game? game);
+    _memoryCache.TryGetValue(gameCode, out Entities.Game? game);
 
     return game;
   }
 
-  public Game? MakeMove(string gameCode, Move move)
+  public Entities.Game? MakeMove(string gameCode, Move move)
   {
-    Game? game = GetGame(gameCode);
+    Entities.Game? game = GetGame(gameCode);
 
     game?.Move(move);
 
