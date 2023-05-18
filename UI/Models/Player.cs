@@ -12,15 +12,15 @@ public class Player
   public required string ImageUrl { get; init; }
 
   public required Marks Mark { get; init; }
-  
-  public bool HasTurn { get; set; }
-  
+
+  public bool HasTurn { get; init; }
+
   public override string ToString()
   {
-    StringBuilder stringBuilder = new StringBuilder($"Connection Id: {ConnectionId} | ");
+    var stringBuilder = new StringBuilder($"Connection Id: {ConnectionId} | ");
     stringBuilder.Append($"Name: {Name} | ");
     stringBuilder.Append($"ImageUrl: {ImageUrl} | ");
-    string markAsString = Mark == Marks.X ? "X" : "O";
+    var markAsString = Mark == Marks.X ? "X" : "O";
     stringBuilder.Append($"Mark: {markAsString} | ");
     stringBuilder.Append($"HasTurn: {HasTurn.ToString()} | ");
 

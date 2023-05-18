@@ -10,6 +10,8 @@ public interface IGameEngineService
 
   void JoinGame(string gameCode, Player guest);
 
+  void LeaveGame(string gameCode, string connectionId);
+
   Game? GetGame(string gameCode);
 
   Game? MakeMove(string gameCode, Move move);

@@ -12,12 +12,12 @@
   <div class="flex justify-center gap-9 pb-6">
     @if (_host is not null)
     {
-      <PlayerCard Player="@_host" ActiveMark="@_activeMark" />
+      <PlayerCard Player="@_host" ActiveMark="@_activeMark"/>
     }
 
     @if (_guest is not null)
     {
-      <PlayerCard Player="@_guest" ActiveMark="@_activeMark" />
+      <PlayerCard Player="@_guest" ActiveMark="@_activeMark"/>
     }
   </div>
 
@@ -49,11 +49,11 @@
     _hubConnection = new HubConnectionBuilder()
       .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
       .Build();
-    
+
     _hubConnection.On<Models.Game>("RenderGame", game =>
     {
-      Console.WriteLine($"RenderGame being called on {_hubConnection.ConnectionId} with game as: {game}");
-      
+      Console.WriteLine($"RenderGame being called on {_hubConnection.ConnectionId}");
+
       _gameBoard = game.GetBoard();
       _host = game.Host;
 

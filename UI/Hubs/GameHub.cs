@@ -30,9 +30,9 @@ public class GameHub : Hub
           Name = "Emma",
           ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
           Mark = Marks.O,
-          HasTurn = false,
+          HasTurn = false
         };
-        
+
         _gameEngineService.JoinGame(gameCode, guest);
       }
       else
@@ -43,22 +43,18 @@ public class GameHub : Hub
           Name = "Dan",
           ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
           Mark = Marks.X,
-          HasTurn = true,
+          HasTurn = true
         };
-        
+
         _gameEngineService.StartGame(gameCode, host);
       }
 
       Game? game = _gameEngineService.GetGame(gameCode);
 
       if (game is not null)
-      {
         await Clients.All.SendAsync("RenderGame", game);
-      }
       else
-      {
         await Clients.All.SendAsync("ShowError", "game not found");
-      }
 
       await base.OnConnectedAsync();
     }
@@ -70,6 +66,8 @@ public class GameHub : Hub
 
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
+      _gameEngineService.LeaveGame(gameCode, Context.ConnectionId);
+
       await base.OnDisconnectedAsync(exception);
     }
   }
@@ -78,9 +76,6 @@ public class GameHub : Hub
   {
     Game? game = _gameEngineService.MakeMove(gameCode, model);
 
-    if (game is not null)
-    {
-      await Clients.All.SendAsync("RenderGame", game);
-    }
+    if (game is not null) await Clients.All.SendAsync("RenderGame", game);
   }
 }

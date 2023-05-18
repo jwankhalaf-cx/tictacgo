@@ -30,14 +30,21 @@ public class GameEngineService : IGameEngineService
   public void JoinGame(string gameCode, Player guest)
   {
     if (!GameExists(gameCode)) return;
-    
+
     Game? game = GetGame(gameCode);
 
     if (game == null || game.CanStart()) return;
-    
+
     game.AddGuest(guest);
 
     _memoryCache.Set(gameCode, game);
+  }
+
+  public void LeaveGame(string gameCode, string connectionId)
+  {
+    Game? game = GetGame(gameCode);
+
+    game?.RemovePlayer(connectionId);
   }
 
   public Game? GetGame(string gameCode)
