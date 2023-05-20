@@ -2,7 +2,7 @@ using UI.Models;
 
 namespace UI.Services.Interfaces;
 
-public interface IGameEngineService
+public interface IGameEngine
 {
   bool GameExists(string gameCode);
 

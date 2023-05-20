@@ -4,11 +4,11 @@ using UI.Services.Interfaces;
 
 namespace UI.Services;
 
-public class GameEngineService : IGameEngineService
+public class GameEngine : IGameEngine
 {
   private readonly IMemoryCache _memoryCache;
 
-  public GameEngineService(IMemoryCache memoryCache)
+  public GameEngine(IMemoryCache memoryCache)
   {
     _memoryCache = memoryCache;
   }
@@ -45,6 +45,8 @@ public class GameEngineService : IGameEngineService
     Entities.Game? game = GetGame(gameCode);
 
     game?.RemovePlayer(connectionId);
+
+    _memoryCache.Set(gameCode, game);
   }
 
   public Entities.Game? GetGame(string gameCode)

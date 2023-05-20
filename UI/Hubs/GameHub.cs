@@ -8,14 +8,14 @@ namespace UI.Hubs;
 
 public class GameHub : Hub
 {
-  private readonly IGameEngineService _gameEngineService;
+  private readonly IGameEngine _gameEngine;
   private readonly IConverter<Entities.Game, Game> _gameMapper;
 
   public GameHub(
-    IGameEngineService gameEngineService,
+    IGameEngine gameEngine,
     IConverter<Entities.Game, Game> gameMapper)
   {
-    _gameEngineService = gameEngineService;
+    _gameEngine = gameEngine;
     _gameMapper = gameMapper;
   }
 
@@ -23,7 +23,7 @@ public class GameHub : Hub
   {
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      bool gameExists = _gameEngineService.GameExists(gameCode);
+      bool gameExists = _gameEngine.GameExists(gameCode);
 
       if (gameExists)
       {
@@ -36,7 +36,7 @@ public class GameHub : Hub
           HasTurn = false
         };
 
-        _gameEngineService.JoinGame(gameCode, guest);
+        _gameEngine.JoinGame(gameCode, guest);
       }
       else
       {
@@ -49,10 +49,10 @@ public class GameHub : Hub
           HasTurn = true
         };
 
-        _gameEngineService.StartGame(gameCode, host);
+        _gameEngine.StartGame(gameCode, host);
       }
 
-      Entities.Game? game = _gameEngineService.GetGame(gameCode);
+      Entities.Game? game = _gameEngine.GetGame(gameCode);
 
       if (game is not null)
       {
@@ -73,7 +73,7 @@ public class GameHub : Hub
   {
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      _gameEngineService.LeaveGame(gameCode, Context.ConnectionId);
+      _gameEngine.LeaveGame(gameCode, Context.ConnectionId);
 
       await base.OnDisconnectedAsync(exception);
     }
@@ -81,7 +81,7 @@ public class GameHub : Hub
 
   public async Task MakeMove(string gameCode, Move model)
   {
-    Entities.Game? game = _gameEngineService.MakeMove(gameCode, model);
+    Entities.Game? game = _gameEngine.MakeMove(gameCode, model);
 
     if (game is not null)
     {
