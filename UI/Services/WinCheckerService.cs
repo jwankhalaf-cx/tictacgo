@@ -1,4 +1,4 @@
-using TicTacGo.Enums;
+using UI.Enums;
 
 namespace UI.Services;
 

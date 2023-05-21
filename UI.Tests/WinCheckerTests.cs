@@ -1,4 +1,4 @@
-using TicTacGo.Enums;
+using UI.Enums;
 using UI.Services;
 using FluentAssertions;
 
