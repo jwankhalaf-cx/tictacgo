@@ -1,34 +1,93 @@
 using Microsoft.AspNetCore.SignalR;
-using TicTacGo.Enums;
-using TicTacGo.Models;
+using UI.Enums;
+using UI.Mappers;
+using UI.Models;
+using UI.Services.Interfaces;
 
-namespace TicTacGo.Hubs
+namespace UI.Hubs;
+
+public class GameHub : Hub
 {
-    public class GameHub : Hub
+  private readonly IGameEngine _gameEngine;
+  private readonly IConverter<Entities.Game, Game> _gameMapper;
+
+  public GameHub(
+    IGameEngine gameEngine,
+    IConverter<Entities.Game, Game> gameMapper)
+  {
+    _gameEngine = gameEngine;
+    _gameMapper = gameMapper;
+  }
+
+  public override async Task OnConnectedAsync()
+  {
+    if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-        public List<string> ConnectedPlayerIds = new List<string>();
-        public Marks[] GameBoard = new Marks[] { Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet };
+      bool gameExists = _gameEngine.GameExists(gameCode);
 
-        public override async Task OnConnectedAsync()
+      if (gameExists)
+      {
+        Entities.Player guest = new()
         {
-            ConnectedPlayerIds.Add(Context.ConnectionId);
-            await Clients.All.SendAsync("DrawGameBoard", GameBoard);
+          ConnectionId = Context.ConnectionId,
+          Name = "Emma",
+          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
+          Mark = Marks.O,
+          HasTurn = false
+        };
 
-            await base.OnConnectedAsync();
-        }
-
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        _gameEngine.JoinGame(gameCode, guest);
+      }
+      else
+      {
+        Entities.Player host = new()
         {
-            ConnectedPlayerIds.Remove(Context.ConnectionId);
+          ConnectionId = Context.ConnectionId,
+          Name = "Dan",
+          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
+          Mark = Marks.X,
+          HasTurn = true
+        };
 
-            await base.OnDisconnectedAsync(exception);
-        }
+        _gameEngine.StartGame(gameCode, host);
+      }
 
-        public async Task MakeMove(MoveModel model)
-        {
-            GameBoard[model.CellIndex] = model.SetMark;
+      Entities.Game? game = _gameEngine.GetGame(gameCode);
 
-            await Clients.All.SendAsync("ReceiveMove", model);
-        }
+      if (game is not null)
+      {
+        Game gameDto = _gameMapper.Convert(game);
+
+        await Clients.All.SendAsync("RenderGame", gameDto);
+      }
+      else
+      {
+        await Clients.All.SendAsync("ShowError", "game not found");
+      }
+
+      await base.OnConnectedAsync();
     }
+  }
+
+  public override async Task OnDisconnectedAsync(Exception? exception)
+  {
+    if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
+    {
+      _gameEngine.LeaveGame(gameCode, Context.ConnectionId);
+
+      await base.OnDisconnectedAsync(exception);
+    }
+  }
+
+  public async Task MakeMove(string gameCode, Move model)
+  {
+    Entities.Game? game = _gameEngine.MakeMove(gameCode, model);
+
+    if (game is not null)
+    {
+      Game gameDto = _gameMapper.Convert(game);
+
+      await Clients.All.SendAsync("RenderGame", gameDto);
+    }
+  }
 }

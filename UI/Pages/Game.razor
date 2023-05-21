@@ -1,94 +1,110 @@
-@page "/game";
-
-@using Microsoft.AspNetCore.SignalR.Client
-@using TicTacGo.Enums
-@using TicTacGo.Models
+@page "/game/{gameCode}";
 
 @inject NavigationManager Navigation
-
+@using Microsoft.AspNetCore.SignalR.Client
+@using UI.Models
+@using UI.Enums
 @implements IAsyncDisposable
 
 <PageTitle>TicTacGo Game</PageTitle>
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen pb-8 pt-40">
-    <div class="flex justify-center gap-9 pb-6">
-        <PlayerCard Player="@PlayerOne" ActiveMark="@ActiveMark" />
-        <PlayerCard Player="@PlayerTwo" ActiveMark="@ActiveMark" />
-    </div>
-    
-    <GameGrid GridCells="@GameBoard" ActiveMark="@ActiveMark" OnClickFunction="@MakeMove" UpdateParentActiveMark="@UpdateActiveMark" />
+  <div class="flex justify-center gap-9 pb-6">
+    @if (_host is not null)
+    {
+      <PlayerCard Player="@_host" ActiveMark="@_activeMark"/>
+    }
+
+    @if (_guest is not null)
+    {
+      <PlayerCard Player="@_guest" ActiveMark="@_activeMark"/>
+    }
+  </div>
+
+  <GameGrid
+    GridCells="@_gameBoard"
+    ActiveMark="@_activeMark"
+    OnClickFunction="@MakeMove"
+    ActivePlayerClientConnectionId="@_activePlayerClientConnectionId"/>
 </div>
 
 @code {
-    private HubConnection? hubConnection;
-    public Marks[] GameBoard = new Marks[9];
-    private Marks ActiveMark = Marks.X;
 
-    PlayerModel PlayerOne = new PlayerModel
+  [Parameter]
+  public string GameCode { get; set; } = "";
+
+  private HubConnection? _hubConnection;
+  private Marks[]? _gameBoard;
+  private Player? _host;
+  private Player? _guest;
+  private Marks _activeMark;
+  private readonly string _activePlayerClientConnectionId = string.Empty;
+
+  protected override async Task OnInitializedAsync()
+  {
+    _hubConnection = new HubConnectionBuilder()
+      .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
+      .Build();
+
+    _hubConnection.On<Models.Game>("RenderGame", game =>
     {
-      Name = "Dan",
-      ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
-      Mark = Marks.X,
-    };
+      _gameBoard = game.Board;
+      _host = game.Host;
 
-    PlayerModel PlayerTwo = new PlayerModel
+      if (game.Guest is not null)
+      {
+        _guest = game.Guest;
+      }
+
+      if (_host is not null && _host.HasTurn)
+      {
+        _activeMark = _host.Mark;
+      }
+      else if (_guest is not null && _guest.HasTurn)
+      {
+        _activeMark = _guest.Mark;
+      }
+
+      InvokeAsync(StateHasChanged);
+    });
+
+    await _hubConnection.StartAsync();
+  }
+
+  public bool IsConnected =>
+    _hubConnection?.State == HubConnectionState.Connected;
+
+  private async Task MakeMove(Move model)
+  {
+    if (CanMakeMove())
     {
-      Name = "Emma",
-      ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-      Mark = Marks.O,
-    };
+      if (_hubConnection is not null)
+      {
+        if (_hubConnection.ConnectionId != null) model.ConnectionId = _hubConnection.ConnectionId;
 
-    private void UpdateActiveMark(Marks mark) {
-        if (mark == Marks.X)
-        {
-          ActiveMark = Marks.O;
-        }
-        else
-        {
-          ActiveMark = Marks.X;
-        }
+        await _hubConnection.SendAsync("MakeMove", GameCode, model);
+      }
+    }
+  }
+
+  private bool CanMakeMove()
+  {
+    if (_host is null || _guest is null) return false;
+
+    if (_host.HasTurn && _host.ConnectionId == _hubConnection?.ConnectionId)
+    {
+      return true;
     }
 
-    protected override async Task OnInitializedAsync()
+    return _guest.HasTurn && _guest.ConnectionId == _hubConnection?.ConnectionId;
+  }
+
+  public async ValueTask DisposeAsync()
+  {
+    if (_hubConnection is not null)
     {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/gamehub"))
-            .Build();
-
-        hubConnection.On<Marks[]>("DrawGameBoard", (model) =>
-        {
-            GameBoard = model;
-            
-            InvokeAsync(StateHasChanged);
-        });
-
-        hubConnection.On<MoveModel>("ReceiveMove", (model) =>
-        {
-            GameBoard[model.CellIndex] = model.SetMark;
-            ActiveMark = model.NextMark;
-            
-            InvokeAsync(StateHasChanged);
-        });
-
-        await hubConnection.StartAsync();
+      await _hubConnection.DisposeAsync();
     }
+  }
 
-    public bool IsConnected =>
-        hubConnection?.State == HubConnectionState.Connected;
-
-    public async Task MakeMove(MoveModel model)
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.SendAsync("MakeMove", model);
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (hubConnection is not null)
-        {
-            await hubConnection.DisposeAsync();
-        }
-    }
 }
