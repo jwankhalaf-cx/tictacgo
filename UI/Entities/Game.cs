@@ -5,119 +5,102 @@ namespace UI.Entities;
 
 public class Game
 {
-    private readonly Marks[] _gameBoard;
+  private readonly Marks[] _gameBoard;
 
-    public Game(string id, Player host)
+  public Game(string id, Player host)
+  {
+    Id = id;
+    Host = host;
+    _gameBoard = new[]
     {
-        Id = id;
-        Host = host;
-        _gameBoard = new[]
-        {
       Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet,
       Marks.NotSet
     };
-    }
+  }
 
-    public string Id { get; set; }
+  public string Id { get; }
 
-    public Player? Host { get; set; }
+  public Player? Host { get; private set; }
 
-    public Player? Guest { get; set; }
+  public Player? Guest { get; private set; }
 
-    public Marks[] GetBoard()
+  public Marks[] GetBoard()
+  {
+    return _gameBoard;
+  }
+
+  public void AddGuest(Player guest)
+  {
+    Guest = guest;
+  }
+
+  public bool CanStart()
+  {
+    return Guest is not null;
+  }
+
+  public void Move(Move move)
+  {
+    if (Host != null && Host.ConnectionId == move.ConnectionId)
     {
-        return _gameBoard;
+      Host.HasTurn = false;
+      if (Guest != null) Guest.HasTurn = true;
     }
 
-    public void AddGuest(Player guest)
+    if (Guest != null && Guest.ConnectionId == move.ConnectionId)
     {
-        Guest = guest;
+      Guest.HasTurn = false;
+      if (Host != null) Host.HasTurn = true;
     }
 
-    public bool CanStart()
+    _gameBoard[move.Index] = move.Mark;
+  }
+
+  public void RemovePlayer(string connectionId)
+  {
+    if (Host is not null)
+      if (Host.ConnectionId == connectionId)
+        Host = null;
+
+    if (Guest is null) return;
+    if (Guest.ConnectionId == connectionId)
+      Guest = null;
+  }
+
+  public GameOutcome? HasOutcome(Marks mark)
+  {
+    bool win = HasWinningRow(mark) || HasWinningColumn(mark) || HasDiagonalWon(mark);
+
+    return win switch
     {
-        return Guest is not null;
-    }
+      false when !CanContinue() => GameOutcome.Draw,
+      true => GameOutcome.Win,
+      _ => null
+    };
+  }
 
-    public void Move(Move move)
-    {
-        if (Host != null && Host.ConnectionId == move.ConnectionId)
-        {
-            Host.HasTurn = false;
-            if (Guest != null) Guest.HasTurn = true;
-        }
+  private bool CanContinue()
+  {
+    return _gameBoard.Any(x => x == Marks.NotSet);
+  }
 
-        if (Guest != null && Guest.ConnectionId == move.ConnectionId)
-        {
-            Guest.HasTurn = false;
-            if (Host != null) Host.HasTurn = true;
-        }
+  private bool HasWinningRow(Marks mark)
+  {
+    return (_gameBoard[0] == mark && _gameBoard[1] == mark && _gameBoard[2] == mark) ||
+           (_gameBoard[3] == mark && _gameBoard[4] == mark && _gameBoard[5] == mark) ||
+           (_gameBoard[6] == mark && _gameBoard[7] == mark && _gameBoard[8] == mark);
+  }
 
-        _gameBoard[move.Index] = move.Mark;
-    }
+  private bool HasWinningColumn(Marks mark)
+  {
+    return (_gameBoard[0] == mark && _gameBoard[3] == mark && _gameBoard[6] == mark) ||
+           (_gameBoard[1] == mark && _gameBoard[4] == mark && _gameBoard[7] == mark) ||
+           (_gameBoard[2] == mark && _gameBoard[5] == mark && _gameBoard[8] == mark);
+  }
 
-    public void RemovePlayer(string connectionId)
-    {
-        if (Host is not null)
-            if (Host.ConnectionId == connectionId)
-                Host = null;
-
-        if (Guest is null) return;
-        if (Guest.ConnectionId == connectionId)
-            Guest = null;
-    }
-    public bool HasWon()
-    {
-        if (Host is not null && HasWinningRow(Host.Mark, _gameBoard) ||
-            HasWinningColumn(Host.Mark, _gameBoard) ||
-            HasDiagonalWon(Host.Mark, _gameBoard))
-        {
-            Host.HasWon = true;
-            return true;
-        }
-        else if (Guest is not null && HasWinningRow(Guest.Mark, _gameBoard) ||
-            HasWinningColumn(Guest.Mark, _gameBoard) ||
-            HasDiagonalWon(Guest.Mark, _gameBoard))
-        {
-            Guest.HasWon = true;
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool HasWinningRow(Marks mark, Marks[] gameBoard)
-    {
-        if (gameBoard[0] == mark && gameBoard[1] == mark && gameBoard[2] == mark ||
-            gameBoard[3] == mark && gameBoard[4] == mark && gameBoard[5] == mark ||
-            gameBoard[6] == mark && gameBoard[7] == mark && gameBoard[8] == mark)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool HasWinningColumn(Marks mark, Marks[] gameBoard)
-    {
-        if (gameBoard[0] == mark && gameBoard[3] == mark && gameBoard[6] == mark ||
-            gameBoard[1] == mark && gameBoard[4] == mark && gameBoard[7] == mark ||
-            gameBoard[2] == mark && gameBoard[5] == mark && gameBoard[8] == mark)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool HasDiagonalWon(Marks mark, Marks[] gameBoard)
-    {
-        if (gameBoard[0] == mark && gameBoard[4] == mark && gameBoard[8] == mark ||
-            gameBoard[2] == mark && gameBoard[4] == mark && gameBoard[6] == mark)
-        {
-            return true;
-        }
-
-        return false;
-    }
+  private bool HasDiagonalWon(Marks mark)
+  {
+    return (_gameBoard[0] == mark && _gameBoard[4] == mark && _gameBoard[8] == mark) ||
+           (_gameBoard[2] == mark && _gameBoard[4] == mark && _gameBoard[6] == mark);
+  }
 }
