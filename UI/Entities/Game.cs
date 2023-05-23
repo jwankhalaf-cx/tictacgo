@@ -66,11 +66,11 @@ public class Game
     if (Guest.ConnectionId == connectionId)
       Guest = null;
   }
-  public bool HasWon(Marks mark, Marks[] gameBoard)
+  public bool HasWon(Marks mark)
     {
-        if (HasWinningRow(mark, gameBoard) ||
-            HasWinningColumn(mark, gameBoard) ||
-            HasDiagonalWon(mark, gameBoard))
+        if (HasWinningRow(mark, _gameBoard) ||
+            HasWinningColumn(mark, _gameBoard) ||
+            HasDiagonalWon(mark, _gameBoard))
         {
             return true;
         }
