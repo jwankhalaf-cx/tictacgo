@@ -18,11 +18,11 @@ public class Game
     };
   }
 
-  public string Id { get; set; }
+  public string Id { get; }
 
-  public Player? Host { get; set; }
+  public Player? Host { get; private set; }
 
-  public Player? Guest { get; set; }
+  public Player? Guest { get; private set; }
 
   public Marks[] GetBoard()
   {
@@ -65,5 +65,42 @@ public class Game
     if (Guest is null) return;
     if (Guest.ConnectionId == connectionId)
       Guest = null;
+  }
+
+  public GameOutcome? HasOutcome(Marks mark)
+  {
+    bool win = HasWinningRow(mark) || HasWinningColumn(mark) || HasDiagonalWon(mark);
+
+    return win switch
+    {
+      false when !CanContinue() => GameOutcome.Draw,
+      true => GameOutcome.Win,
+      _ => null
+    };
+  }
+
+  private bool CanContinue()
+  {
+    return _gameBoard.Any(x => x == Marks.NotSet);
+  }
+
+  private bool HasWinningRow(Marks mark)
+  {
+    return (_gameBoard[0] == mark && _gameBoard[1] == mark && _gameBoard[2] == mark) ||
+           (_gameBoard[3] == mark && _gameBoard[4] == mark && _gameBoard[5] == mark) ||
+           (_gameBoard[6] == mark && _gameBoard[7] == mark && _gameBoard[8] == mark);
+  }
+
+  private bool HasWinningColumn(Marks mark)
+  {
+    return (_gameBoard[0] == mark && _gameBoard[3] == mark && _gameBoard[6] == mark) ||
+           (_gameBoard[1] == mark && _gameBoard[4] == mark && _gameBoard[7] == mark) ||
+           (_gameBoard[2] == mark && _gameBoard[5] == mark && _gameBoard[8] == mark);
+  }
+
+  private bool HasDiagonalWon(Marks mark)
+  {
+    return (_gameBoard[0] == mark && _gameBoard[4] == mark && _gameBoard[8] == mark) ||
+           (_gameBoard[2] == mark && _gameBoard[4] == mark && _gameBoard[6] == mark);
   }
 }
