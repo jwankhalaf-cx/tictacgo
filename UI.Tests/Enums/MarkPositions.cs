@@ -1,6 +1,6 @@
-namespace UI.Enums;
+namespace UI.Tests.Enums;
 
-public enum MarkPostions
+public enum MarkPositions
 {
   ColumnOne,
   ColumnTwo,

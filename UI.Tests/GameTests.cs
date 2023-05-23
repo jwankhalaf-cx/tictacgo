@@ -1,4 +1,5 @@
 using UI.Enums;
+using UI.Tests.Enums;
 using UI.Entities;
 using FluentAssertions;
 
@@ -14,7 +15,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInFirstRow_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.RowOne);
+    Game game = SetupGame(MarkPositions.RowOne);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -28,7 +29,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInSecondRow_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.RowTwo);
+    Game game = SetupGame(MarkPositions.RowTwo);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -42,7 +43,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInThirdRow_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.RowThree);
+    Game game = SetupGame(MarkPositions.RowThree);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -60,7 +61,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInFirstColumn_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.ColumnOne);
+    Game game = SetupGame(MarkPositions.ColumnOne);
 
     //act
     //act
@@ -75,7 +76,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInSecondColumn_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.ColumnTwo);
+    Game game = SetupGame(MarkPositions.ColumnTwo);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -89,7 +90,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInThirdColumn_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.ColumnThree);
+    Game game = SetupGame(MarkPositions.ColumnThree);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -107,7 +108,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksForwardDiagonally_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.DiagonalForward);
+    Game game = SetupGame(MarkPositions.DiagonalForward);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -121,7 +122,7 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksBackwardDiagonally_ShouldReturnWinningOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.DiagonalBackward);
+    Game game = SetupGame(MarkPositions.DiagonalBackward);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -139,7 +140,7 @@ public class GameTests
   public void HasOutcome_WhenNoWinMatchingPatternsExist_ShouldReturnDrawOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.Draw);
+    Game game = SetupGame(MarkPositions.Draw);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -157,7 +158,7 @@ public class GameTests
   public void HasOutcome_WhenNoWinMatchingPatternsExistAndBoardIsNotFull_ShouldReturnNullOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPostions.RandomWithBoardNotFull);
+    Game game = SetupGame(MarkPositions.RandomWithBoardNotFull);
 
     //act
     GameOutcome? outcome = game.HasOutcome(Mark);
@@ -168,7 +169,7 @@ public class GameTests
 
   #endregion
 
-  private static Game SetupGame(MarkPostions positions)
+  private static Game SetupGame(MarkPositions positions)
   {
     Player host = new()
     {
@@ -201,223 +202,256 @@ public class GameTests
     return game;
   }
 
-  private static List<Models.Move> GetMoves(MarkPostions positions)
+  private static List<Models.Move> GetMoves(MarkPositions positions)
   {
     List<Models.Move> moves;
 
     switch (positions)
     {
-      case MarkPostions.ColumnOne:
+      case MarkPositions.ColumnOne:
       {
         var move = new Models.Move
         {
           Index = 0,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 3,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 6,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.ColumnTwo:
+      case MarkPositions.ColumnTwo:
       {
         var move = new Models.Move
         {
           Index = 1,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 4,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 7,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.ColumnThree:
+      case MarkPositions.ColumnThree:
       {
         var move = new Models.Move
         {
           Index = 2,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 5,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 8,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.RowOne:
+      case MarkPositions.RowOne:
       {
         var move = new Models.Move
         {
           Index = 0,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 1,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 2,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.RowTwo:
+      case MarkPositions.RowTwo:
       {
         var move = new Models.Move
         {
           Index = 3,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 4,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 5,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.RowThree:
+      case MarkPositions.RowThree:
       {
         var move = new Models.Move
         {
           Index = 6,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 7,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 8,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.DiagonalForward:
+      case MarkPositions.DiagonalForward:
       {
         var move = new Models.Move
         {
           Index = 2,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 4,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 6,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.DiagonalBackward:
+      case MarkPositions.DiagonalBackward:
       {
         var move = new Models.Move
         {
           Index = 0,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 4,
           Mark = Marks.X
         };
+
         var move3 = new Models.Move
         {
           Index = 8,
           Mark = Marks.X
         };
+
         moves = new List<Models.Move> { move, move2, move3 };
         break;
       }
-      case MarkPostions.Draw:
+      case MarkPositions.Draw:
       {
         var move = new Models.Move
         {
           Index = 0,
           Mark = Marks.X
         };
+
         var move2 = new Models.Move
         {
           Index = 1,
           Mark = Marks.O
         };
+
         var move3 = new Models.Move
         {
           Index = 2,
           Mark = Marks.X
         };
+
         var move4 = new Models.Move
         {
           Index = 3,
           Mark = Marks.X
         };
+
         var move5 = new Models.Move
         {
           Index = 4,
           Mark = Marks.X
         };
+
         var move6 = new Models.Move
         {
           Index = 5,
           Mark = Marks.O
         };
+
         var move7 = new Models.Move
         {
           Index = 6,
           Mark = Marks.O
         };
+
         var move8 = new Models.Move
         {
           Index = 7,
           Mark = Marks.X
         };
+
         var move9 = new Models.Move
         {
           Index = 8,
           Mark = Marks.O
         };
+
         moves = new List<Models.Move> { move, move2, move3, move4, move5, move6, move7, move8, move9 };
         break;
       }
-      case MarkPostions.RandomWithBoardNotFull:
+      case MarkPositions.RandomWithBoardNotFull:
       {
         var move = new Models.Move
         {
