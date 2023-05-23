@@ -15,23 +15,12 @@ public class GameTests
         Game game = SetupGame(MarkPostions.RowOne);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
-    }
-
-    [Fact]
-    public void HasWon_WhenNoWinMatchingPatternsExist_ShouldReturnFalse()
-    {
-        // arrange
-        Game game = SetupGame(MarkPostions.NoWin);
-
-        //act
-        bool hasWon = game.HasWon(Marks.X);
-
-        // assert
-        hasWon.Should().BeFalse();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
     [Fact]
@@ -41,10 +30,12 @@ public class GameTests
         Game game = SetupGame(MarkPostions.RowTwo);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
     [Fact]
@@ -54,10 +45,12 @@ public class GameTests
         Game game = SetupGame(MarkPostions.RowThree);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
     #endregion
@@ -71,10 +64,12 @@ public class GameTests
         Game game = SetupGame(MarkPostions.ColumnOne);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
     [Fact]
@@ -84,10 +79,12 @@ public class GameTests
         Game game = SetupGame(MarkPostions.ColumnTwo);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
     [Fact]
@@ -97,10 +94,12 @@ public class GameTests
         Game game = SetupGame(MarkPostions.ColumnThree);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
     #endregion
@@ -114,10 +113,12 @@ public class GameTests
         Game game = SetupGame(MarkPostions.DiagonalForward);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
     [Fact]
@@ -127,12 +128,32 @@ public class GameTests
         Game game = SetupGame(MarkPostions.DiagonalBackward);
 
         //act
-        bool hasWon = game.HasWon(Marks.X);
+        bool hasWon = game.HasWon();
 
         // assert
         hasWon.Should().BeTrue();
+        game.Host.HasWon.Should().BeTrue();
+        game.Guest.HasWon.Should().BeFalse();
     }
 
+    #endregion
+
+    #region "checking draw"
+
+    [Fact]
+    public void HasWon_WhenNoWinMatchingPatternsExist_ShouldReturnFalse()
+    {
+        // arrange
+        Game game = SetupGame(MarkPostions.NoWin);
+
+        //act
+        bool hasWon = game.HasWon();
+
+        // assert
+        hasWon.Should().BeFalse();
+        game.Host.HasWon.Should().BeFalse();
+        game.Guest.HasWon.Should().BeFalse();
+    }
     #endregion
     private Game SetupGame(MarkPostions positions)
     {
@@ -146,6 +167,15 @@ public class GameTests
         };
         string GameId = "g00";
         Game game = new Game(GameId, host);
+        Player guest = new()
+        {
+            ConnectionId = "player two connection hub id",
+            Name = "Emma",
+            ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
+            Mark = Marks.O,
+            HasTurn = false
+        };
+        game.AddGuest(guest);
         List<UI.Models.Move> moves = GetMoves(positions);
         foreach (var move in moves)
         {
