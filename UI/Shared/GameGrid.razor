@@ -8,7 +8,7 @@
     {
       var cell = GridCells[i];
       var index = i;
-      <button @onclick="() => PlaceMark(cell, index)" class="bg-indigo-900 rounded-lg  flex items-center justify-center cursor-pointer">
+      <button @onclick="() => PlaceMark(cell, index)" class="bg-indigo-900 rounded-lg @(CanMakeMove ? "cursor-pointer" : "cursor-not-allowed") flex items-center justify-center">
         @if (cell == Marks.X)
         {
           <img src="icons/x.svg" class="w-1/2" alt="X mark"/>
@@ -20,7 +20,6 @@
       </button>
     }
   }
-
 </div>
 
 @code {
@@ -35,10 +34,7 @@
   public EventCallback<Move> OnClickFunction { get; set; }
 
   [Parameter]
-  public required string ActivePlayerClientConnectionId { get; set; }
-
-  [Parameter]
-  public bool HasTurn { get; set; }
+  public bool CanMakeMove { get; set; }
 
   private void PlaceMark(Marks cell, int index)
   {
