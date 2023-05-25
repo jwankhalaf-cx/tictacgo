@@ -1,6 +1,5 @@
 @using UI.Enums
 @using UI.Models
-
 <div class="bg-indigo-600 grid grid-cols-3 grid-rows-3 gap-2 h-80 w-80 m-auto mb-2 p-2 rounded-lg">
   @if (GridCells is not null)
   {
@@ -8,7 +7,7 @@
     {
       var cell = GridCells[i];
       var index = i;
-      <button @onclick="() => PlaceMark(cell, index)" class="bg-indigo-900 rounded-lg @(CanMakeMove ? "cursor-pointer" : "cursor-not-allowed") flex items-center justify-center">
+      <button @onclick="() => PlaceMark(cell, index)" class="bg-indigo-900 rounded-lg @(CanMakeMove ? "cursor-pointer" : "cursor-not-allowed") flex active:bg-indigo-800 items-center justify-center">
         @if (cell == Marks.X)
         {
           <img src="icons/x.svg" class="w-1/2" alt="X mark"/>

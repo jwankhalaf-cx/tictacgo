@@ -1,7 +1,7 @@
 @using UI.Models
 @using UI.Enums
 <div class="grid justify-items-center mb-5">
-  <div class="bg-indigo-950 w-28 h-48 grid content-between justify-items-center justify-center rounded-xl p-1 @GetActiveStateCssClasses()">
+  <div class="bg-indigo-950 w-28 h-48 grid content-between justify-items-center justify-center rounded-xl p-1 mb-3 @GetActiveStateCssClasses()">
     <div class="rounded-full min-w-ful h-20 w-20 max-w-max mx-2">
       <img src="@Player.ImageUrl" alt="@Player.Name's photo"/>
     </div>
@@ -22,10 +22,35 @@
     </div>
   </div>
 
-  <div class="text-white text-lg font-semibold text-center mt-2 @(!Player.HasTurn ? "invisible" : "")">Your turn</div>
+  @if (!Player.HasTurn && Player.ConnectionId == ClientConnectionId)
+  {
+    <div class="flex gap-2 items-center">
+      <div>
+        <div
+          class="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-white border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          role="status">
+          <span
+            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+            Wait your turn...
+          </span
+          >
+        </div>
+      </div>
+
+      <h4 class="text-white text-lg font-semibold">Wait</h4>
+    </div>
+  }
+
+  @if (Player.HasTurn && Player.ConnectionId == ClientConnectionId)
+  {
+    <div class="text-white text-lg font-semibold text-center @(!Player.HasTurn ? "invisible" : "")">Your turn</div>
+  }
 </div>
 
 @code {
+
+  [Parameter]
+  public required string ClientConnectionId { get; set; }
 
   [Parameter]
   public required Player Player { get; set; }
