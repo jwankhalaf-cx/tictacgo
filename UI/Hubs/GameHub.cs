@@ -86,10 +86,7 @@ public class GameHub : Hub
     if (game is not null)
     {
       // check if last move was a win or draw
-      GameOutcome? outcome = game.HasOutcome(model.Mark);
-
-      if (outcome.HasValue)
-        Console.WriteLine(outcome == GameOutcome.Win ? "Someone has won the game!" : "The game ended in draw!");
+      game.SetWinnerIfAny(model);
 
       Game gameDto = _gameMapper.Convert(game);
 
