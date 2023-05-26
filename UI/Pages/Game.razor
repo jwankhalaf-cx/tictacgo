@@ -2,35 +2,40 @@
 
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.SignalR.Client
-@using UI.Models
 @using UI.Enums
+@using UI.Models
 @implements IAsyncDisposable
 
 <PageTitle>TicTacGo Game</PageTitle>
 
 <div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen pb-8 pt-40">
-  @if(_host is not null && _host.HasWon){
+  @if (_host is not null && _host.HasWon)
+  {
     <WinnerScreen Winner="@_host"/>
-  } else if (_guest is not null && _guest.HasWon){
+  }
+  else if (_guest is not null && _guest.HasWon)
+  {
     <WinnerScreen Winner="@_guest"/>
-  } 
-  else {
-     <div class="flex justify-center gap-9 pb-6">
-    @if (_host is not null)
-    {
-      <PlayerCard Player="@_host"/>
-    }
+  }
+  else
+  {
+    <div class="flex justify-center gap-9 pb-6">
+      @if (_host is not null)
+      {
+        <PlayerCard Player="@_host"/>
+      }
 
-    @if (_guest is not null)
-    {
-      <PlayerCard Player="@_guest"/>
-    }
-  </div>
-  <GameGrid
-    GridCells="@_gameBoard"
-    ActiveMark="@_activeMark"
-    OnClickFunction="@MakeMove"
-    ActivePlayerClientConnectionId="@_activePlayerClientConnectionId"/>
+      @if (_guest is not null)
+      {
+        <PlayerCard Player="@_guest"/>
+      }
+    </div>
+
+    <GameGrid
+      GridCells="@_gameBoard"
+      ActiveMark="@_activeMark"
+      OnClickFunction="@MakeMove"
+      ActivePlayerClientConnectionId="@_activePlayerClientConnectionId"/>
   }
 </div>
 
