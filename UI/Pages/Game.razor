@@ -22,12 +22,12 @@
     <div class="flex justify-center gap-9 pb-6">
       @if (_host is not null)
       {
-        <PlayerCard Player="@_host"/>
+        <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
       }
 
       @if (_guest is not null)
       {
-        <PlayerCard Player="@_guest"/>
+        <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
       }
     </div>
 
@@ -35,7 +35,7 @@
       GridCells="@_gameBoard"
       ActiveMark="@_activeMark"
       OnClickFunction="@MakeMove"
-      ActivePlayerClientConnectionId="@_activePlayerClientConnectionId"/>
+      CanMakeMove="@CanMakeMove()"/>
   }
 </div>
 
@@ -49,7 +49,7 @@
   private Player? _host;
   private Player? _guest;
   private Marks _activeMark;
-  private readonly string _activePlayerClientConnectionId = string.Empty;
+  private string _clientConnectionId = string.Empty;
 
   protected override async Task OnInitializedAsync()
   {
@@ -80,6 +80,8 @@
     });
 
     await _hubConnection.StartAsync();
+
+    if (_hubConnection.ConnectionId != null) _clientConnectionId = _hubConnection.ConnectionId;
   }
 
   public bool IsConnected =>
