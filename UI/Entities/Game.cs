@@ -67,16 +67,29 @@ public class Game
       Guest = null;
   }
 
-  public GameOutcome? HasOutcome(Marks mark)
+  public GameOutcome? HasOutcome(Move model)
   {
-    bool win = HasWinningRow(mark) || HasWinningColumn(mark) || HasDiagonalWon(mark);
+    var win = HasWinningRow(model.Mark) || HasWinningColumn(model.Mark) || HasDiagonalWon(model.Mark);
 
-    return win switch
+    switch (win)
     {
-      false when !CanContinue() => GameOutcome.Draw,
-      true => GameOutcome.Win,
-      _ => null
-    };
+      case false:
+        return !CanContinue() ? GameOutcome.Draw : null;
+
+      case true:
+        if (Host is not null && Host.ConnectionId == model.ConnectionId && Host.Mark == model.Mark)
+        {
+          Host.HasWon = true;
+          Host.HasTurn = false;
+        }
+        else if (Guest is not null && Guest.ConnectionId == model.ConnectionId && Guest.Mark == model.Mark)
+        {
+          Guest.HasWon = true;
+          Guest.HasTurn = false;
+        }
+
+        return GameOutcome.Win;
+    }
   }
 
   private bool CanContinue()

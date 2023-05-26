@@ -1,18 +1,19 @@
-using UI.Models;
+using UI.Entities;
 
 namespace UI.Mappers;
 
-public class PlayerEntityToModelMapper : IConverter<Entities.Player, Player>
+public class PlayerEntityToModelMapper : IConverter<Player, Models.Player>
 {
-  public Player Convert(Entities.Player sourceObject)
+  public Models.Player Convert(Player sourceObject)
   {
-    return new Player()
+    return new Models.Player
     {
       ConnectionId = sourceObject.ConnectionId,
       Name = sourceObject.Name,
       ImageUrl = sourceObject.ImageUrl,
       Mark = sourceObject.Mark,
-      HasTurn = sourceObject.HasTurn
+      HasTurn = sourceObject.HasTurn,
+      HasWon = sourceObject.HasWon
     };
   }
 }
