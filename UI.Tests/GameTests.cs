@@ -7,7 +7,12 @@ namespace UI.Tests;
 
 public class GameTests
 {
-  private const Marks Mark = Marks.X;
+  private  Models.Move model = new Models.Move
+        {
+          Index = 0,
+          Mark = Marks.X
+        };
+
 
   #region checking rows
 
@@ -18,7 +23,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.RowOne);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -32,7 +37,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.RowTwo);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -46,7 +51,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.RowThree);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -65,7 +70,7 @@ public class GameTests
 
     //act
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -79,7 +84,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.ColumnTwo);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -93,7 +98,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.ColumnThree);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -111,7 +116,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.DiagonalForward);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -125,7 +130,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.DiagonalBackward);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -143,7 +148,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.Draw);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -161,7 +166,7 @@ public class GameTests
     Game game = SetupGame(MarkPositions.RandomWithBoardNotFull);
 
     //act
-    GameOutcome? outcome = game.HasOutcome(Mark);
+    GameOutcome? outcome = game.HasOutcome(model);
 
     // assert
     outcome.Should().BeNull();

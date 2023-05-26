@@ -8,89 +8,89 @@ namespace UI.Hubs;
 
 public class GameHub : Hub
 {
-  private readonly IGameEngine _gameEngine;
-  private readonly IConverter<Entities.Game, Game> _gameMapper;
+    private readonly IGameEngine _gameEngine;
+    private readonly IConverter<Entities.Game, Game> _gameMapper;
 
-  public GameHub(
-    IGameEngine gameEngine,
-    IConverter<Entities.Game, Game> gameMapper)
-  {
-    _gameEngine = gameEngine;
-    _gameMapper = gameMapper;
-  }
-
-  public override async Task OnConnectedAsync()
-  {
-    if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
+    public GameHub(
+      IGameEngine gameEngine,
+      IConverter<Entities.Game, Game> gameMapper)
     {
-      bool gameExists = _gameEngine.GameExists(gameCode);
+        _gameEngine = gameEngine;
+        _gameMapper = gameMapper;
+    }
 
-      if (gameExists)
-      {
-        Entities.Player guest = new()
+    public override async Task OnConnectedAsync()
+    {
+        if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
         {
-          ConnectionId = Context.ConnectionId,
-          Name = "Emma",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-          Mark = Marks.O,
-          HasTurn = false
-        };
+            bool gameExists = _gameEngine.GameExists(gameCode);
 
-        _gameEngine.JoinGame(gameCode, guest);
-      }
-      else
-      {
-        Entities.Player host = new()
+            if (gameExists)
+            {
+                Entities.Player guest = new()
+                {
+                    ConnectionId = Context.ConnectionId,
+                    Name = "Emma",
+                    ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
+                    Mark = Marks.O,
+                    HasTurn = false
+                };
+
+                _gameEngine.JoinGame(gameCode, guest);
+            }
+            else
+            {
+                Entities.Player host = new()
+                {
+                    ConnectionId = Context.ConnectionId,
+                    Name = "Dan",
+                    ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
+                    Mark = Marks.X,
+                    HasTurn = true
+                };
+
+                _gameEngine.StartGame(gameCode, host);
+            }
+
+            Entities.Game? game = _gameEngine.GetGame(gameCode);
+
+            if (game is not null)
+            {
+                Game gameDto = _gameMapper.Convert(game);
+
+                await Clients.All.SendAsync("RenderGame", gameDto);
+            }
+            else
+            {
+                await Clients.All.SendAsync("ShowError", "game not found");
+            }
+
+            await base.OnConnectedAsync();
+        }
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
         {
-          ConnectionId = Context.ConnectionId,
-          Name = "Dan",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
-          Mark = Marks.X,
-          HasTurn = true
-        };
+            _gameEngine.LeaveGame(gameCode, Context.ConnectionId);
 
-        _gameEngine.StartGame(gameCode, host);
-      }
-
-      Entities.Game? game = _gameEngine.GetGame(gameCode);
-
-      if (game is not null)
-      {
-        Game gameDto = _gameMapper.Convert(game);
-
-        await Clients.All.SendAsync("RenderGame", gameDto);
-      }
-      else
-      {
-        await Clients.All.SendAsync("ShowError", "game not found");
-      }
-
-      await base.OnConnectedAsync();
+            await base.OnDisconnectedAsync(exception);
+        }
     }
-  }
 
-  public override async Task OnDisconnectedAsync(Exception? exception)
-  {
-    if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
+    public async Task MakeMove(string gameCode, Move model)
     {
-      _gameEngine.LeaveGame(gameCode, Context.ConnectionId);
+        Entities.Game? game = _gameEngine.MakeMove(gameCode, model);
 
-      await base.OnDisconnectedAsync(exception);
+        if (game is not null)
+        {
+            // check if last move was a win or draw
+            game.HasOutcome(model);
+
+            Game gameDto = _gameMapper.Convert(game);
+
+            await Clients.All.SendAsync("RenderGame", gameDto);
+        }
     }
-  }
-
-  public async Task MakeMove(string gameCode, Move model)
-  {
-    Entities.Game? game = _gameEngine.MakeMove(gameCode, model);
-
-    if (game is not null)
-    {
-      // check if last move was a win or draw
-      game.SetWinnerIfAny(model);
-
-      Game gameDto = _gameMapper.Convert(game);
-
-      await Clients.All.SendAsync("RenderGame", gameDto);
-    }
-  }
 }

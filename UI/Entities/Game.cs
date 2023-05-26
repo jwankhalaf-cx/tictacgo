@@ -67,16 +67,26 @@ public class Game
             Guest = null;
     }
 
-    public GameOutcome? HasOutcome(Marks mark)
+    public GameOutcome? HasOutcome(Move model)
     {
-        bool win = HasWinningRow(mark) || HasWinningColumn(mark) || HasDiagonalWon(mark);
-
-        return win switch
+        bool win = HasWinningRow(model.Mark) || HasWinningColumn(model.Mark) || HasDiagonalWon(model.Mark);
+        switch (win)
         {
-            false when !CanContinue() => GameOutcome.Draw,
-            true => GameOutcome.Win,
-            _ => null
-        };
+            case false:
+                return !CanContinue() ? GameOutcome.Draw : null;
+            case true:
+                if (this.Host is not null && this.Host.ConnectionId == model.ConnectionId && this.Host.Mark == model.Mark)
+                {
+                    this.Host.HasWon = true;
+                    this.Host.HasTurn = false;
+                }
+                else if (this.Guest is not null && this.Guest.ConnectionId == model.ConnectionId && this.Guest.Mark == model.Mark)
+                {
+                    this.Guest.HasWon = true;
+                    this.Guest.HasTurn = false;
+                }
+                return GameOutcome.Win;
+        }
     }
 
     private bool CanContinue()
@@ -104,24 +114,4 @@ public class Game
                (_gameBoard[2] == mark && _gameBoard[4] == mark && _gameBoard[6] == mark);
     }
 
-    public void SetWinnerIfAny(Move model)
-    {
-        GameOutcome? outcome = this.HasOutcome(model.Mark);
-        if (outcome.HasValue)
-        {
-            if (outcome == GameOutcome.Win)
-            {
-                if (this.Host is not null && this.Host.Mark == model.Mark)
-                {
-                    this.Host.HasWon = true;
-                    this.Host.HasTurn = false;
-                }
-                else if (this.Guest is not null && this.Guest.Mark == model.Mark)
-                {
-                    this.Guest.HasWon = true;
-                    this.Guest.HasTurn = false;
-                }
-            }
-        }
-    }
 }
