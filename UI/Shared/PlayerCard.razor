@@ -30,9 +30,6 @@
   [Parameter]
   public required Player Player { get; set; }
 
-  [Parameter]
-  public Marks ActiveMark { get; set; }
-
   private string GetActiveStateCssClasses()
   {
     return Player.HasTurn ? "border-2 border-white" : "";

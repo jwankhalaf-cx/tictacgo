@@ -3,17 +3,19 @@ using UI.Enums;
 using UI.Mappers;
 using UI.Models;
 using UI.Services.Interfaces;
+using Game = UI.Entities.Game;
+using Player = UI.Entities.Player;
 
 namespace UI.Hubs;
 
 public class GameHub : Hub
 {
   private readonly IGameEngine _gameEngine;
-  private readonly IConverter<Entities.Game, Game> _gameMapper;
+  private readonly IConverter<Game, Models.Game> _gameMapper;
 
   public GameHub(
     IGameEngine gameEngine,
-    IConverter<Entities.Game, Game> gameMapper)
+    IConverter<Game, Models.Game> gameMapper)
   {
     _gameEngine = gameEngine;
     _gameMapper = gameMapper;
@@ -23,11 +25,11 @@ public class GameHub : Hub
   {
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      bool gameExists = _gameEngine.GameExists(gameCode);
+      var gameExists = _gameEngine.GameExists(gameCode);
 
       if (gameExists)
       {
-        Entities.Player guest = new()
+        Player guest = new()
         {
           ConnectionId = Context.ConnectionId,
           Name = "Emma",
@@ -40,7 +42,7 @@ public class GameHub : Hub
       }
       else
       {
-        Entities.Player host = new()
+        Player host = new()
         {
           ConnectionId = Context.ConnectionId,
           Name = "Dan",
@@ -52,11 +54,11 @@ public class GameHub : Hub
         _gameEngine.StartGame(gameCode, host);
       }
 
-      Entities.Game? game = _gameEngine.GetGame(gameCode);
+      var game = _gameEngine.GetGame(gameCode);
 
       if (game is not null)
       {
-        Game gameDto = _gameMapper.Convert(game);
+        var gameDto = _gameMapper.Convert(game);
 
         await Clients.All.SendAsync("RenderGame", gameDto);
       }
@@ -81,17 +83,14 @@ public class GameHub : Hub
 
   public async Task MakeMove(string gameCode, Move model)
   {
-    Entities.Game? game = _gameEngine.MakeMove(gameCode, model);
+    var game = _gameEngine.MakeMove(gameCode, model);
 
     if (game is not null)
     {
       // check if last move was a win or draw
-      GameOutcome? outcome = game.HasOutcome(model.Mark);
+      game.HasOutcome(model);
 
-      if (outcome.HasValue)
-        Console.WriteLine(outcome == GameOutcome.Win ? "Someone has won the game!" : "The game ended in draw!");
-
-      Game gameDto = _gameMapper.Convert(game);
+      var gameDto = _gameMapper.Convert(game);
 
       await Clients.All.SendAsync("RenderGame", gameDto);
     }
