@@ -4,20 +4,29 @@
 
 <PageTitle>TicTacGo | Home</PageTitle>
 
-<div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen flex flex-col justify-around items-center p-20">
-  <Logo/>
+<div class="flex items-center h-full">
+  <div class="flex flex-col items-center justify-center basis-full">
+    <Logo/>
 
-  <div>
-    <a @onclick="GoToGame" class="cursor-pointer mb-4 text-4xl bg-gradient-to-r from-pink-900 to-pink-500 w-60 text-center mx-auto block text-white p-3 rounded-r-full rounded-l-full">Start Game</a>
-    <a class="cursor-pointer text-4xl bg-gradient-to-r from-orange-400 to-orange-500 mx-auto block text-white p-3 text-center w-60 rounded-r-full rounded-l-full">Join Game</a>
+    <div class="mb-12">
+      <p class="font-['Quicksand'] text-slate-200">Welcome to the best multiplayer tic-tac-toe game on the internet!</p>
+    </div>
+
+    <div class="flex flex-col self-stretch">
+      <a @onclick="StartGame" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full mb-3 cursor-pointer">Start Game</a>
+
+      <a class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Join Game</a>
+    </div>
   </div>
 </div>
 
 @code {
 
-  private void GoToGame()
+  private void StartGame()
   {
-    Navigation.NavigateTo("/game/g00", new NavigationOptions
+    string gameCode = Guid.NewGuid().ToString("n")[..6];
+
+    Navigation.NavigateTo($"/game/{gameCode}", new NavigationOptions
     {
       HistoryEntryState = "Navigation state"
     });
