@@ -4,11 +4,12 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @using UI.Enums
 @using UI.Models
+@using UI.Components
 @implements IAsyncDisposable
 
 <PageTitle>TicTacGo Game</PageTitle>
 
-<div class="bg-gradient-to-r from-violet-900 to-purple-900 h-screen pb-8">
+<div class="pt-20">
   @if (_host is not null && _host.HasWon)
   {
     <WinnerScreen Winner="@_host"/>
@@ -19,23 +20,24 @@
   }
   else
   {
-    <div class="flex justify-center gap-9 pb-6">
-      @if (_host is not null)
-      {
+    if (_gameCanStart)
+    {
+      <div class="flex justify-center gap-9 pb-6">
         <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
-      }
 
-      @if (_guest is not null)
-      {
         <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
-      }
-    </div>
+      </div>
 
-    <GameGrid
-      GridCells="@_gameBoard"
-      ActiveMark="@_activeMark"
-      OnClickFunction="@MakeMove"
-      CanMakeMove="@CanMakeMove()"/>
+      <GameGrid
+        GridCells="@_gameBoard"
+        ActiveMark="@_activeMark"
+        OnClickFunction="@MakeMove"
+        CanMakeMove="@CanMakeMove()"/>
+    }
+    else
+    {
+      <GameCode GameShareCode="@GameCode"/>
+    }
   }
 </div>
 
@@ -45,6 +47,7 @@
   public string GameCode { get; set; } = "";
 
   private HubConnection? _hubConnection;
+  private bool _gameCanStart;
   private Marks[]? _gameBoard;
   private Player? _host;
   private Player? _guest;
@@ -60,6 +63,7 @@
     _hubConnection.On<Models.Game>("RenderGame", game =>
     {
       _gameBoard = game.Board;
+      _gameCanStart = game.CanStart;
       _host = game.Host;
 
       if (game.Guest is not null)

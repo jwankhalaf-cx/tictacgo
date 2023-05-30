@@ -5,7 +5,11 @@ module.exports = {
         '**/*.{razor,html}',
     ],
     theme: {
-        extend: {},
+        extend: {
+            backgroundImage: {
+                'main-pattern': "url('/images/background.svg')",
+            }
+        },
     },
     plugins: [require('@tailwindcss/forms')]
 }
