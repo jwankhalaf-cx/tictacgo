@@ -1,0 +1,20 @@
+@using UI.Models
+
+<div class="pt-20">
+  <div class="w-64 mx-auto flex justify-between h-28 mb-12">
+    <h1>Lost SVGS</h1>
+  </div>
+
+  <PlayerCard Player="@Loser"/>
+
+  <h1 class="font-['Quicksand'] text-center text-slate-200 text-3xl font-medium mt-8 font-semibold">Better Luck Next Time ...</h1>
+
+  <h2 class="font-['Quicksand'] text-amber-400 text-center text-xl font-medium mt-4 font-semibold">You Lost</h2>
+</div>
+
+@code {
+
+  [Parameter]
+  public required Player Loser { get; set; }
+
+}

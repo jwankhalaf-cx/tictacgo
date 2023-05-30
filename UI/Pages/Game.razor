@@ -10,13 +10,21 @@
 <PageTitle>TicTacGo Game</PageTitle>
 
 <div class="pt-20">
-  @if (_host is not null && _host.HasWon)
+  @if (_host is not null && _host.HasWon && _host.ConnectionId == _clientConnectionId)
   {
     <WinnerScreen Winner="@_host"/>
   }
-  else if (_guest is not null && _guest.HasWon)
+  else if (_host is not null && _guest is not null && _guest.HasWon && _host.ConnectionId == _clientConnectionId) 
+  {
+    <LoserScreen Loser="@_host"/>
+  }
+  else if (_guest is not null && _guest.HasWon && _guest.ConnectionId == _clientConnectionId)
   {
     <WinnerScreen Winner="@_guest"/>
+  }
+  else if (_guest is not null && _host is not null && _host.HasWon && _guest.ConnectionId == _clientConnectionId)
+  {
+    <LoserScreen Loser="@_guest"/>
   }
   else
   {
