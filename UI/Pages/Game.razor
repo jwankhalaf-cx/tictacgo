@@ -23,15 +23,9 @@
     if (_gameCanStart)
     {
       <div class="flex justify-center gap-9 pb-6">
-        @if (_host is not null)
-        {
-          <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
-        }
+        <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
 
-        @if (_guest is not null)
-        {
-          <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
-        }
+        <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
       </div>
 
       <GameGrid
