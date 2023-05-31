@@ -63,7 +63,7 @@ public class GameHub : Hub
             }
             else
             {
-                await Clients.All.SendAsync("ShowError", "game not found");
+                await Clients.Group(gameCode).SendAsync("ShowError", "game not found");
             }
 
             await base.OnConnectedAsync();
