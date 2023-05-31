@@ -1,15 +1,17 @@
 @using UI.Models
 
 <div class="pt-20">
-  <div class="w-64 mx-auto flex justify-between h-28 mb-12">
-    <h1>Lost SVGS</h1>
+  <div class="w-64 flex mx-auto justify-center h-28 mb-12">
+   <svg xmlns="http://www.w3.org/2000/svg" width="93" height="94" class="fill-rose-600"><path fill="#EB1751" d="M46.5.5C72.188.5 93 21.313 93 47c0 25.688-20.813 46.5-46.5 46.5C20.812 93.5 0 72.687 0 47 0 21.312 20.813.5 46.5.5Zm27 72.563C79.875 66.313 84 57.124 84 47 84 26.375 67.125 9.5 46.5 9.5 25.687 9.5 9 26.375 9 47c0 10.125 3.938 19.313 10.5 26.063V51.5c0-2.438 1.875-4.5 4.5-4.5 2.438 0 4.5 2.063 4.5 4.5V80a38.212 38.212 0 0 0 18 4.5c6.375 0 12.563-1.688 18-4.5V51.5c0-2.438 1.875-4.5 4.5-4.5 2.438 0 4.5 2.063 4.5 4.5v21.563Zm-35.063-30c-.937.562-2.062.187-2.437-.376l-1.875-1.5c-2.813-2.437-8.625-2.437-11.438 0L21 42.688c-.75.75-1.875.75-2.625.376-.75-.376-1.313-1.313-1.125-2.25.75-4.876 6.375-8.063 11.25-8.063 4.688 0 10.313 3.188 11.063 8.063.187.937-.188 1.874-1.126 2.25ZM64.5 32.75c4.688 0 10.313 3.188 11.063 8.063.187.937-.188 1.874-1.126 2.25-.937.562-2.062.187-2.437-.376l-1.875-1.5c-2.813-2.437-8.625-2.437-11.438 0L57 42.688c-.75.75-1.875.75-2.625.376-.938-.376-1.313-1.313-1.125-2.25.75-4.876 6.375-8.063 11.25-8.063ZM46.5 50C52.125 50 57 55.438 57 62c0 6.75-4.875 12-10.5 12C40.687 74 36 68.75 36 62c0-6.563 4.688-12 10.5-12Z"/></svg>
+
+
   </div>
 
   <PlayerCard Player="@Loser"/>
 
-  <h1 class="font-['Quicksand'] text-center text-slate-200 text-3xl font-medium mt-8 font-semibold">Better Luck Next Time ...</h1>
+  <h1 class="font-['Quicksand'] text-center text-slate-200 text-3xl font-medium mt-8 font-semibold">Oh! You've lost</h1>
 
-  <h2 class="font-['Quicksand'] text-amber-400 text-center text-xl font-medium mt-4 font-semibold">You Lost</h2>
+  <h2 class="font-['Quicksand'] text-rose-600 text-center text-xl font-medium mt-4 font-semibold">Sorry @Loser.Name</h2>
 </div>
 
 @code {
