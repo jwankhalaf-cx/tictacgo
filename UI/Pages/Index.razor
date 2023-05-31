@@ -5,32 +5,32 @@
 <PageTitle>TicTacGo | Home</PageTitle>
 
 <div class="flex items-center h-full">
-  <div class="flex flex-col items-center justify-center basis-full">
-    <Logo/>
+    <div class="flex flex-col items-center justify-center basis-full">
+        <Logo/>
 
-    <div class="mb-12">
-      <p class="font-['Quicksand'] text-slate-200 leading-relaxed mb-3">Welcome to the best multiplayer tic-tac-toe game on the internet!</p>
-      <p class="font-['Quicksand'] text-slate-200 leading-relaxed">Are you ready to unleash your strategic genius and engage in an epic battle of wits? Look no further than our sensational Tic Tac Toe game. Whether you're a seasoned strategist or a casual player looking for some fun, our game guarantees endless hours of excitement and brain-teasing challenges.</p>
+        <div class="mb-12">
+            <p class="font-['Quicksand'] text-slate-200 leading-relaxed mb-3">Welcome to the best multiplayer tic-tac-toe game on the internet!</p>
+            <p class="font-['Quicksand'] text-slate-200 leading-relaxed">Are you ready to unleash your strategic genius and engage in an epic battle of wits? Look no further than our sensational Tic Tac Toe game. Whether you're a seasoned strategist or a casual player looking for some fun, our game guarantees endless hours of excitement and brain-teasing challenges.</p>
+        </div>
+
+        <div class="flex flex-col self-stretch">
+            <a @onclick="StartGame" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full mb-4 cursor-pointer">Start Game</a>
+
+            <a class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Join Game</a>
+        </div>
     </div>
-
-    <div class="flex flex-col self-stretch">
-      <a @onclick="StartGame" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full mb-4 cursor-pointer">Start Game</a>
-
-      <a class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Join Game</a>
-    </div>
-  </div>
 </div>
 
 @code {
 
-  private void StartGame()
-  {
-    string gameCode = Guid.NewGuid().ToString("n")[..6];
-
-    Navigation.NavigateTo($"/game/{gameCode}", new NavigationOptions
+    private void StartGame()
     {
-      HistoryEntryState = "Navigation state"
-    });
-  }
+        var gameCode = Guid.NewGuid().ToString("n")[..6];
+
+        Navigation.NavigateTo($"/game/{gameCode}", new NavigationOptions
+        {
+            HistoryEntryState = "Navigation state"
+        });
+    }
 
 }

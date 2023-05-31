@@ -10,118 +10,118 @@
 <PageTitle>TicTacGo Game</PageTitle>
 
 <div class="pt-20">
-  @if (_host is not null && _host.HasWon)
-  {
-    <WinnerScreen Winner="@_host"/>
-  }
-  else if (_guest is not null && _guest.HasWon)
-  {
-    <WinnerScreen Winner="@_guest"/>
-  }
-  else
-  {
-    if (_gameCanStart)
+    @if (_host is not null && _host.HasWon)
     {
-      <div class="flex justify-center gap-9 pb-6">
-        <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
-
-        <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
-      </div>
-
-      <GameGrid
-        GridCells="@_gameBoard"
-        ActiveMark="@_activeMark"
-        OnClickFunction="@MakeMove"
-        CanMakeMove="@CanMakeMove()"/>
+        <WinnerScreen Winner="@_host"/>
+    }
+    else if (_guest is not null && _guest.HasWon)
+    {
+        <WinnerScreen Winner="@_guest"/>
     }
     else
     {
-      <GameCode GameShareCode="@GameCode"/>
+        if (_gameCanStart)
+        {
+            <div class="flex justify-center gap-9 pb-6">
+                <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
+
+                <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
+            </div>
+
+            <GameGrid
+                GridCells="@_gameBoard"
+                ActiveMark="@_activeMark"
+                OnClickFunction="@MakeMove"
+                CanMakeMove="@CanMakeMove()"/>
+        }
+        else
+        {
+            <GameCode GameShareCode="@GameCode"/>
+        }
     }
-  }
 </div>
 
 @code {
 
-  [Parameter]
-  public string GameCode { get; set; } = "";
+    [Parameter]
+    public string GameCode { get; set; } = "";
 
-  private HubConnection? _hubConnection;
-  private bool _gameCanStart;
-  private Marks[]? _gameBoard;
-  private Player? _host;
-  private Player? _guest;
-  private Marks _activeMark;
-  private string _clientConnectionId = string.Empty;
+    private HubConnection? _hubConnection;
+    private bool _gameCanStart;
+    private Marks[]? _gameBoard;
+    private Player? _host;
+    private Player? _guest;
+    private Marks _activeMark;
+    private string _clientConnectionId = string.Empty;
 
-  protected override async Task OnInitializedAsync()
-  {
-    _hubConnection = new HubConnectionBuilder()
-      .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
-      .Build();
-
-    _hubConnection.On<Models.Game>("RenderGame", game =>
+    protected override async Task OnInitializedAsync()
     {
-      _gameBoard = game.Board;
-      _gameCanStart = game.CanStart;
-      _host = game.Host;
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
+            .Build();
 
-      if (game.Guest is not null)
-      {
-        _guest = game.Guest;
-      }
+        _hubConnection.On<Models.Game>("RenderGame", game =>
+        {
+            _gameBoard = game.Board;
+            _gameCanStart = game.CanStart;
+            _host = game.Host;
 
-      if (_host is not null && _host.HasTurn)
-      {
-        _activeMark = _host.Mark;
-      }
-      else if (_guest is not null && _guest.HasTurn)
-      {
-        _activeMark = _guest.Mark;
-      }
+            if (game.Guest is not null)
+            {
+                _guest = game.Guest;
+            }
 
-      InvokeAsync(StateHasChanged);
-    });
+            if (_host is not null && _host.HasTurn)
+            {
+                _activeMark = _host.Mark;
+            }
+            else if (_guest is not null && _guest.HasTurn)
+            {
+                _activeMark = _guest.Mark;
+            }
 
-    await _hubConnection.StartAsync();
+            InvokeAsync(StateHasChanged);
+        });
 
-    if (_hubConnection.ConnectionId != null) _clientConnectionId = _hubConnection.ConnectionId;
-  }
+        await _hubConnection.StartAsync();
 
-  public bool IsConnected =>
-    _hubConnection?.State == HubConnectionState.Connected;
-
-  private async Task MakeMove(Move model)
-  {
-    if (CanMakeMove())
-    {
-      if (_hubConnection is not null)
-      {
-        if (_hubConnection.ConnectionId != null) model.ConnectionId = _hubConnection.ConnectionId;
-
-        await _hubConnection.SendAsync("MakeMove", GameCode, model);
-      }
-    }
-  }
-
-  private bool CanMakeMove()
-  {
-    if (_host is null || _guest is null) return false;
-
-    if (_host.HasTurn && _host.ConnectionId == _hubConnection?.ConnectionId)
-    {
-      return true;
+        if (_hubConnection.ConnectionId != null) _clientConnectionId = _hubConnection.ConnectionId;
     }
 
-    return _guest.HasTurn && _guest.ConnectionId == _hubConnection?.ConnectionId;
-  }
+    public bool IsConnected =>
+        _hubConnection?.State == HubConnectionState.Connected;
 
-  public async ValueTask DisposeAsync()
-  {
-    if (_hubConnection is not null)
+    private async Task MakeMove(Move model)
     {
-      await _hubConnection.DisposeAsync();
+        if (CanMakeMove())
+        {
+            if (_hubConnection is not null)
+            {
+                if (_hubConnection.ConnectionId != null) model.ConnectionId = _hubConnection.ConnectionId;
+
+                await _hubConnection.SendAsync("MakeMove", GameCode, model);
+            }
+        }
     }
-  }
+
+    private bool CanMakeMove()
+    {
+        if (_host is null || _guest is null) return false;
+
+        if (_host.HasTurn && _host.ConnectionId == _hubConnection?.ConnectionId)
+        {
+            return true;
+        }
+
+        return _guest.HasTurn && _guest.ConnectionId == _hubConnection?.ConnectionId;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
 
 }
