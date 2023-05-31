@@ -36,7 +36,7 @@ public class Game
 
   public bool CanStart()
   {
-    return Guest is not null;
+    return Host is not null && Guest is not null;
   }
 
   public void Move(Move move)

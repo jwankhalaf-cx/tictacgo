@@ -1,13 +1,14 @@
 @using UI.Models
 @using UI.Enums
+
 <div class="grid justify-items-center mb-5">
-  <div class="bg-indigo-950 w-28 h-48 grid content-between justify-items-center justify-center rounded-xl p-1 mb-3 @GetActiveStateCssClasses()">
+  <div class="bg-slate-700 w-28 h-48 grid content-between justify-items-center justify-center rounded-xl p-1 mb-3 @GetActiveStateCssClasses()">
     <div class="rounded-full min-w-ful h-20 w-20 max-w-max mx-2">
       <img src="@Player.ImageUrl" alt="@Player.Name's photo"/>
     </div>
 
     <div class="grid content-center text font-semibold w-12 h-9 max-w-max">
-      <h1 class="text-white text-center outline-0">@Player.Name</h1>
+      <h1 class="font-['Quicksand'] text-slate-200 text-center outline-0">@Player.Name</h1>
     </div>
 
     <div class="max-w-full max-h-full h-12 w-8 text-center flex items-center justify-center">
@@ -27,7 +28,7 @@
     <div class="flex gap-2 items-center">
       <div>
         <div
-          class="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-white border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          class="inline-block h-4 w-4 animate-spin rounded-full border-4 border-solid border-slate-200 border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
           role="status">
           <span
             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
@@ -37,13 +38,13 @@
         </div>
       </div>
 
-      <h4 class="text-white text-lg font-semibold">Wait</h4>
+      <h4 class="font-['Quicksand'] text-slate-200 text-lg font-semibold">Wait</h4>
     </div>
   }
 
   @if (Player.HasTurn && Player.ConnectionId == ClientConnectionId)
   {
-    <div class="text-white text-lg font-semibold text-center @(!Player.HasTurn ? "invisible" : "")">Your turn</div>
+    <div class="font-['Quicksand'] text-slate-200 text-lg font-semibold text-center @(!Player.HasTurn ? "invisible" : "")">Your turn</div>
   }
 </div>
 
@@ -57,7 +58,7 @@
 
   private string GetActiveStateCssClasses()
   {
-    return Player.HasTurn ? "border-2 border-white" : "";
+    return Player.HasTurn ? "border-2 border-slate-400" : "";
   }
 
 }

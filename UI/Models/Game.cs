@@ -11,4 +11,6 @@ public class Game
   public Player? Guest { get; set; }
 
   public Marks[]? Board { get; set; }
+
+  public bool CanStart { get; set; }
 }
