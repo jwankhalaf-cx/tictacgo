@@ -1,0 +1,27 @@
+@page "/joingame"
+@inject NavigationManager Navigation
+<div class="font-['Quicksand'] flex flex-col text-white m-20 align-center justify-between h-1/2">
+    <div class="flex flex-col">
+        <label for="game-code">
+            Enter game code
+        </label>
+        <input id="game-code" maxlength="6" type="text" @bind="GameCode" placeholder="X698L3" class="uppercase rounded-xl p-6 mt-4 text-3xl text-slate-800 text-center"/>
+    </div>
+    <div>
+        <a @onclick="@Start" class="w-full inline-block font-['Quicksand'] text-xl text-center text-slate-200 p-2 border border-white rounded-r-full rounded-l-full cursor-pointer">Join Game</a>
+    </div>
+</div>
+
+@code {
+    private string GameCode { get; set; } = string.Empty;
+
+    private void Start()
+    {
+        string gameCode = GameCode.ToLower();
+        Navigation.NavigateTo($"/game/{gameCode}", new NavigationOptions
+        {
+            HistoryEntryState = "Navigation state"
+        });
+    }
+
+}
