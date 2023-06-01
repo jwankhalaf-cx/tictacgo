@@ -12,6 +12,7 @@ public class GameHub : Hub
 {
   private readonly IGameEngine _gameEngine;
   private readonly IConverter<Game, Models.Game> _gameMapper;
+  private bool GameExist { get; set; }
 
   public GameHub(
     IGameEngine gameEngine,
@@ -25,49 +26,54 @@ public class GameHub : Hub
   {
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      var gameExists = _gameEngine.GameExists(gameCode);
-
-      if (gameExists)
+      if (gameCode == "checkgame")
       {
-        Player guest = new()
-        {
-          ConnectionId = Context.ConnectionId,
-          Name = "Emma",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-          Mark = Marks.O,
-          HasTurn = false
-        };
-
-        _gameEngine.JoinGame(gameCode, guest);
       }
       else
       {
-        Player host = new()
+        var gameExists = _gameEngine.GameExists(gameCode);
+        if (gameExists)
         {
-          ConnectionId = Context.ConnectionId,
-          Name = "Dan",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
-          Mark = Marks.X,
-          HasTurn = true
-        };
+          Player guest = new()
+          {
+            ConnectionId = Context.ConnectionId,
+            Name = "Emma",
+            ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
+            Mark = Marks.O,
+            HasTurn = false
+          };
 
-        _gameEngine.StartGame(gameCode, host);
+          _gameEngine.JoinGame(gameCode, guest);
+        }
+        else
+        {
+          Player host = new()
+          {
+            ConnectionId = Context.ConnectionId,
+            Name = "Dan",
+            ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
+            Mark = Marks.X,
+            HasTurn = true
+          };
+
+          _gameEngine.StartGame(gameCode, host);
+        }
+
+        var game = _gameEngine.GetGame(gameCode);
+
+        if (game is not null)
+        {
+          var gameDto = _gameMapper.Convert(game);
+
+          await Clients.All.SendAsync("RenderGame", gameDto);
+        }
+        else
+        {
+          await Clients.All.SendAsync("ShowError", "game not found");
+        }
+
+        await base.OnConnectedAsync();
       }
-
-      var game = _gameEngine.GetGame(gameCode);
-
-      if (game is not null)
-      {
-        var gameDto = _gameMapper.Convert(game);
-
-        await Clients.All.SendAsync("RenderGame", gameDto);
-      }
-      else
-      {
-        await Clients.All.SendAsync("ShowError", "game not found");
-      }
-
-      await base.OnConnectedAsync();
     }
   }
 
@@ -94,5 +100,11 @@ public class GameHub : Hub
 
       await Clients.All.SendAsync("RenderGame", gameDto);
     }
+  }
+
+  public async void CheckGameExist(string gameCode)
+  {
+    GameExist = _gameEngine.GameExists(gameCode);
+    await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", GameExist);
   }
 }
