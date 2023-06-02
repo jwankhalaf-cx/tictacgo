@@ -12,7 +12,7 @@
 <div class="pt-20">
     @if (_gameCanStart)
     {
-      @if (_host.HasWon)
+      @if (_host != null && _host.HasWon)
       {
         @if (_host.ConnectionId == _clientConnectionId) 
         {
@@ -23,7 +23,7 @@
           <LoserScreen Loser="@_guest"/>
         }
       }
-      else if (_guest.HasWon)
+      else if (_guest != null && _guest.HasWon)
       {
         @if (_guest.ConnectionId == _clientConnectionId)
         {
