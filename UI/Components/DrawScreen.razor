@@ -1,0 +1,25 @@
+@using UI.Models
+
+<div class="pt-20">
+  <div class="w-64 mx-auto flex justify-center h-28 mb-12">
+    <svg width="93" height="94" viewBox="0 0 93 94" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M46.5 0.5C72.1875 0.5 93 21.3125 93 47C93 72.6875 72.1875 93.5 46.5 93.5C20.8125 93.5 0 72.6875 0 47C0 21.3125 20.8125 0.5 46.5 0.5ZM46.5 84.5C67.125 84.5 84 67.8125 84 47C84 26.375 67.125 9.5 46.5 9.5C25.6875 9.5 9 26.375 9 47C9 67.8125 25.6875 84.5 46.5 84.5ZM31.5 32C34.6875 32 37.5 34.8125 37.5 38C37.5 41.375 34.6875 44 31.5 44C28.125 44 25.5 41.375 25.5 38C25.5 34.8125 28.125 32 31.5 32ZM61.5 32C64.6875 32 67.5 34.8125 67.5 38C67.5 41.375 64.6875 44 61.5 44C58.125 44 55.5 41.375 55.5 38C55.5 34.8125 58.125 32 61.5 32Z" fill="white"/>
+    </svg>
+  </div>
+
+  <PlayerCard Player="@Player"/>
+
+  <h1 class="font-['Quicksand'] text-center text-slate-200 text-3xl font-medium mt-8 font-semibold">It's a draw!</h1>
+
+    <div class="flex flex-col self-stretch mt-8">
+        <a class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Restart Game</a>
+    </div>
+
+</div>
+
+@code {
+
+  [Parameter]
+  public required Player Player { get; set; }
+
+}

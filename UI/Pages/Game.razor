@@ -34,6 +34,18 @@
           <LoserScreen Loser="@_host"/>
         }
       }
+      else if (_host != null && !_host.HasTurn && _guest != null && !_guest.HasTurn)
+      {
+        if (_host.ConnectionId == _clientConnectionId)
+        {
+          <DrawScreen Player="@_host"/>
+        }
+        else
+        {
+          <DrawScreen Player="@_guest"/>
+        }
+
+      }
       else
       {
       <div class="flex justify-center gap-9 pb-6">
