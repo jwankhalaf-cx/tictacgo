@@ -25,6 +25,7 @@ public class GameHub : Hub
   {
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
+      if (gameCode == "checkinggamecode") return;
       var gameExists = _gameEngine.GameExists(gameCode);
 
       if (gameExists)
@@ -52,7 +53,6 @@ public class GameHub : Hub
           Mark = Marks.X,
           HasTurn = true
         };
-
         await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
 
         _gameEngine.StartGame(gameCode, host);
@@ -98,5 +98,11 @@ public class GameHub : Hub
 
       await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
     }
+  }
+
+  public async void GameExist(string gameCode)
+  {
+    bool gameExist = _gameEngine.GameExists(gameCode);
+    await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", gameExist);
   }
 }
