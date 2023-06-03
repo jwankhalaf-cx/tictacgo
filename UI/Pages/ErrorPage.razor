@@ -3,12 +3,13 @@
 @inject NavigationManager Navigation
 
 <div class="font-['Quicksand'] flex flex-col text-white m-20 align-center justify-between h-1/2">
-  <h1 class="pt-20 text-3xl text-red-400 text-center">Game Not Found</h1>
-  <a @onclick="StartGame" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full mb-4 cursor-pointer">Start Game</a>
+  <h1 class="pt-20 text-3xl text-red-400 text-center outline-0">Game Not Found</h1>
+
+  <a @onclick="StartGame" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full mb-4 cursor-pointer">Start A New Game</a>
 </div>
 
 @code {
-  
+
   private void StartGame()
   {
     var gameCode = Guid.NewGuid().ToString("n")[..6];
@@ -18,4 +19,5 @@
       HistoryEntryState = "Navigation state"
     });
   }
+
 }
