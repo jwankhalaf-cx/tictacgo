@@ -8,23 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
   </ItemGroup>
 
   <Target Name="CheckForNpm" BeforeTargets="NpmInstall">
     <Exec Command="node --version" ContinueOnError="false">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="You must install node and npm to build this project"/>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="You must install node and npm to build this project" />
   </Target>
 
   <Target Name="NpmInstall" BeforeTargets="ProcessCSS" Inputs="package.json" Outputs="$(NpmLastInstall) ">
-    <Exec Command="npm install" ContinueOnError="false"/>
-    <Touch Files="$(NpmLastInstall)" AlwaysCreate="true"/>
+    <Exec Command="npm install" ContinueOnError="false" />
+    <Touch Files="$(NpmLastInstall)" AlwaysCreate="true" />
   </Target>
 
   <Target Name="ProcessCSS" BeforeTargets="Compile">
-    <Exec Command="npm run tcss"/>
+    <Exec Command="npm run tcss" />
   </Target>
 
 </Project>
