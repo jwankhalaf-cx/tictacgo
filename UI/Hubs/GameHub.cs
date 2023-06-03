@@ -38,6 +38,8 @@ public class GameHub : Hub
           HasTurn = false
         };
 
+        await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
+
         _gameEngine.JoinGame(gameCode, guest);
       }
       else
@@ -51,6 +53,8 @@ public class GameHub : Hub
           HasTurn = true
         };
 
+        await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
+
         _gameEngine.StartGame(gameCode, host);
       }
 
@@ -60,11 +64,11 @@ public class GameHub : Hub
       {
         var gameDto = _gameMapper.Convert(game);
 
-        await Clients.All.SendAsync("RenderGame", gameDto);
+        await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
       }
       else
       {
-        await Clients.All.SendAsync("ShowError", "game not found");
+        await Clients.Group(gameCode).SendAsync("ShowError", "game not found");
       }
 
       await base.OnConnectedAsync();
@@ -76,7 +80,7 @@ public class GameHub : Hub
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
       _gameEngine.LeaveGame(gameCode, Context.ConnectionId);
-
+      await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameCode);
       await base.OnDisconnectedAsync(exception);
     }
   }
@@ -92,7 +96,7 @@ public class GameHub : Hub
 
       var gameDto = _gameMapper.Convert(game);
 
-      await Clients.All.SendAsync("RenderGame", gameDto);
+      await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
     }
   }
 }

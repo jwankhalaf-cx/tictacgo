@@ -15,139 +15,13 @@ public class GameTests
     Mark = Marks.X
   };
 
-
-  #region checking rows
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksInFirstRow_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.RowOne);
-
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksInSecondRow_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.RowTwo);
-
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksInThirdRow_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.RowThree);
-
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  #endregion
-
-  #region checking columns
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksInFirstColumn_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.ColumnOne);
-
-    //act
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksInSecondColumn_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.ColumnTwo);
-
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksInThirdColumn_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.ColumnThree);
-
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  #endregion
-
-  #region checking Diagonal
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksForwardDiagonally_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.DiagonalForward);
-
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  [Fact]
-  public void HasOutcome_WhenThreeMatchingMarksBackwardDiagonally_ShouldReturnWinningOutcome()
-  {
-    // arrange
-    Game game = SetupGame(MarkPositions.DiagonalBackward);
-
-    //act
-    var outcome = game.HasOutcome(_model);
-
-    // assert
-    outcome.Should().NotBeNull();
-    outcome.Should().Be(GameOutcome.Win);
-  }
-
-  #endregion
-
   #region checking draw
 
   [Fact]
   public void HasOutcome_WhenNoWinMatchingPatternsExist_ShouldReturnDrawOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPositions.Draw);
+    var game = SetupGame(MarkPositions.Draw);
 
     //act
     var outcome = game.HasOutcome(_model);
@@ -165,7 +39,7 @@ public class GameTests
   public void HasOutcome_WhenNoWinMatchingPatternsExistAndBoardIsNotFull_ShouldReturnNullOutcome()
   {
     // arrange
-    Game game = SetupGame(MarkPositions.RandomWithBoardNotFull);
+    var game = SetupGame(MarkPositions.RandomWithBoardNotFull);
 
     //act
     var outcome = game.HasOutcome(_model);
@@ -198,11 +72,11 @@ public class GameTests
 
     const string gameId = "g00";
 
-    Game game = new Game(gameId, host);
+    var game = new Game(gameId, host);
 
     game.AddGuest(guest);
 
-    List<Move> moves = GetMoves(positions);
+    var moves = GetMoves(positions);
 
     foreach (var move in moves) game.Move(move);
 
@@ -493,4 +367,130 @@ public class GameTests
 
     return moves;
   }
+
+
+  #region checking rows
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksInFirstRow_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.RowOne);
+
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksInSecondRow_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.RowTwo);
+
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksInThirdRow_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.RowThree);
+
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  #endregion
+
+  #region checking columns
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksInFirstColumn_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.ColumnOne);
+
+    //act
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksInSecondColumn_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.ColumnTwo);
+
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksInThirdColumn_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.ColumnThree);
+
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  #endregion
+
+  #region checking Diagonal
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksForwardDiagonally_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.DiagonalForward);
+
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  [Fact]
+  public void HasOutcome_WhenThreeMatchingMarksBackwardDiagonally_ShouldReturnWinningOutcome()
+  {
+    // arrange
+    var game = SetupGame(MarkPositions.DiagonalBackward);
+
+    //act
+    var outcome = game.HasOutcome(_model);
+
+    // assert
+    outcome.Should().NotBeNull();
+    outcome.Should().Be(GameOutcome.Win);
+  }
+
+  #endregion
 }

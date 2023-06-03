@@ -1,9 +1,8 @@
-using UI.Models;
-using Player = UI.Entities.Player;
+using UI.Entities;
 
 namespace UI.Mappers;
 
-public class GameEntityToModelMapper : IConverter<Entities.Game, Game>
+public class GameEntityToModelMapper : IConverter<Game, Models.Game>
 {
   private readonly IConverter<Player, Models.Player> _playerMapper;
 
@@ -12,9 +11,9 @@ public class GameEntityToModelMapper : IConverter<Entities.Game, Game>
     _playerMapper = playerMapper;
   }
 
-  public Game Convert(Entities.Game sourceObject)
+  public Models.Game Convert(Game sourceObject)
   {
-    Game game = new Game();
+    var game = new Models.Game();
     game.Id = sourceObject.Id;
     if (sourceObject.Host is not null) game.Host = _playerMapper.Convert(sourceObject.Host);
     if (sourceObject.Guest is not null) game.Guest = _playerMapper.Convert(sourceObject.Guest);
