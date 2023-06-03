@@ -10,29 +10,13 @@
 <PageTitle>TicTacGo Game</PageTitle>
 
 <div class="pt-20">
-    @if (_gameCanStart)
+  @if (_gameCanStart)
+  {
+    @if (_host is {HasWon: true })
     {
-      @if (_host != null && _host.HasWon)
+      @if (_host.ConnectionId == _clientConnectionId)
       {
-        @if (_host.ConnectionId == _clientConnectionId) 
-        {
-          <WinnerScreen Winner="@_host"/>
-        }
-        else
-        {
-          <LoserScreen Loser="@_guest"/>
-        }
-      }
-      else if (_guest != null && _guest.HasWon)
-      {
-        @if (_guest.ConnectionId == _clientConnectionId)
-        {
-         <WinnerScreen Winner="@_guest"/> 
-        }
-        else 
-        {
-          <LoserScreen Loser="@_host"/>
-        }
+        <WinnerScreen Winner="@_host"/>
       }
       else if (_host != null && !_host.HasTurn && _guest != null && !_guest.HasTurn)
       {
@@ -48,6 +32,22 @@
       }
       else
       {
+        <LoserScreen Loser="@_guest"/>
+      }
+    }
+    else if (_guest is {HasWon: true })
+    {
+      @if (_guest.ConnectionId == _clientConnectionId)
+      {
+        <WinnerScreen Winner="@_guest"/>
+      }
+      else
+      {
+        <LoserScreen Loser="@_host"/>
+      }
+    }
+    else
+    {
       <div class="flex justify-center gap-9 pb-6">
         <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
 
@@ -59,13 +59,30 @@
         ActiveMark="@_activeMark"
         OnClickFunction="@MakeMove"
         CanMakeMove="@CanMakeMove()"/>
-      }
+    }
+  }
+  else
+  {
+    if (_gameCanStart)
+    {
+      <div class="flex justify-center gap-9 pb-6">
+        <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
+
+        <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
+      </div>
+
+      <GameGrid
+        GridCells="@_gameBoard"
+        ActiveMark="@_activeMark"
+        OnClickFunction="@MakeMove"
+        CanMakeMove="@CanMakeMove()"/>
     }
     else
     {
       <GameCode GameShareCode="@GameCode"/>
     }
-  
+  }
+
 </div>
 
 @code {

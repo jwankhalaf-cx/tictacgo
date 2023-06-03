@@ -94,16 +94,14 @@ public class Game
           Host.HasWon = true;
           Host.HasTurn = false;
           if (Guest is not null) Guest.HasTurn = false;
-          
         }
         else if (Guest is not null && Guest.ConnectionId == model.ConnectionId && Guest.Mark == model.Mark)
         {
           Guest.HasWon = true;
           Guest.HasTurn = false;
           if (Host is not null) Host.HasTurn = false;
-          
         }
-        
+
         return GameOutcome.Win;
     }
   }
