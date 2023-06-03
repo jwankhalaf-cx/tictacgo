@@ -18,22 +18,10 @@
       {
         <WinnerScreen Winner="@_host"/>
       }
-      else if (_host != null && !_host.HasTurn && _guest != null && !_guest.HasTurn)
-      {
-        if (_host.ConnectionId == _clientConnectionId)
-        {
-          <DrawScreen Player="@_host"/>
-        }
-        else
-        {
-          <DrawScreen Player="@_guest"/>
-        }
-
-      }
       else
       {
         <LoserScreen Loser="@_guest"/>
-      }
+      } 
     }
     else if (_guest is {HasWon: true })
     {
@@ -44,6 +32,17 @@
       else
       {
         <LoserScreen Loser="@_host"/>
+      }
+    }
+    else if (_host != null && !_host.HasTurn && _guest != null && !_guest.HasTurn)
+    {
+      if (_host.ConnectionId == _clientConnectionId)
+      {
+        <DrawScreen Player="@_host"/>
+      }
+      else
+      {
+        <DrawScreen Player="@_guest"/>
       }
     }
     else
