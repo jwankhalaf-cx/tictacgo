@@ -1,6 +1,8 @@
 @page "/joingame"
+
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.SignalR.Client
+
 <div class="font-['Quicksand'] flex flex-col text-white m-20 align-center justify-between h-1/2">
   <div class="flex flex-col">
     <label for="game-code">
@@ -12,32 +14,47 @@
     <a @onclick="@Start" @onclick:preventDefault="true" class="w-full inline-block font-['Quicksand'] text-xl text-center text-slate-200 p-2 border border-white rounded-r-full rounded-l-full cursor-pointer">Join Game</a>
   </div>
 </div>
-<h3 class="text-3xl text-red-400 text-center">@GameNotFound</h3>
+<h3 class="text-3xl text-red-400 text-center">@GameStatusMessage</h3>
 
 @code {
+  
   private string GameCode { get; set; } = string.Empty;
   private HubConnection? _hubConnection;
-  private string GameNotFound { get; set; } = string.Empty;
+  private string GameStatusMessage { get; set; } = string.Empty;
 
   protected override async Task OnInitializedAsync()
   {
     _hubConnection = new HubConnectionBuilder()
       .WithUrl(Navigation.ToAbsoluteUri("/gamehub/checkinggamecode"))
       .Build();
-    _hubConnection.On<bool>("CheckGame", gameExist =>
+    
+    _hubConnection.On<string>("CheckGame", gameStatus =>
     {
-      if (gameExist)
+      switch (gameStatus)
       {
-        Navigation.NavigateTo($"/game/{GameCode.ToLower()}", new NavigationOptions
-        {
-          HistoryEntryState = "Navigation state"
-        });
+        case "CanJoin":
+          Navigation.NavigateTo($"/game/{GameCode.ToLower()}", new NavigationOptions
+          {
+            HistoryEntryState = "Navigation state"
+          });
+          break;
+        case "WrongCode":
+          GameStatusMessage = "Oops, wrong code";
+          break;
+          case "NotAllowed":
+            Navigation.NavigateTo($"/ErrorPage", new NavigationOptions
+            {
+              HistoryEntryState = "Navigation state"
+            });
+            break;
+        default:
+          GameStatusMessage = "";
+          break;
       }
-      else
-      {
-        GameNotFound = "Ops, wrong code";
-      }
+
+      InvokeAsync(StateHasChanged);
     });
+    
     await _hubConnection.StartAsync();
   }
 
@@ -45,7 +62,7 @@
   {
     if (_hubConnection is not null)
     {
-      await _hubConnection.InvokeAsync("GameExist", GameCode.ToLower());
+      await _hubConnection.SendAsync("GameStatus", GameCode.ToLower());
     }
   }
 
