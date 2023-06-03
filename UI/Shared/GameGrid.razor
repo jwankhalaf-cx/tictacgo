@@ -1,49 +1,49 @@
 @using UI.Enums
 @using UI.Models
 <div class="bg-slate-600 grid grid-cols-3 grid-rows-3 gap-2 h-80 w-80 m-auto mb-2 p-2 rounded-lg">
-    @if (GridCells is not null)
+  @if (GridCells is not null)
+  {
+    @for (var i = 0; i < GridCells.Length; i++)
     {
-        @for (var i = 0; i < GridCells.Length; i++)
+      var cell = GridCells[i];
+      var index = i;
+      <button @onclick="() => PlaceMark(cell, index)" class="bg-slate-800 rounded-lg @(CanMakeMove ? "cursor-pointer" : "cursor-not-allowed") flex active:bg-slate-700 items-center justify-center">
+        @if (cell == Marks.X)
         {
-            var cell = GridCells[i];
-            var index = i;
-            <button @onclick="() => PlaceMark(cell, index)" class="bg-slate-800 rounded-lg @(CanMakeMove ? "cursor-pointer" : "cursor-not-allowed") flex active:bg-slate-700 items-center justify-center">
-                @if (cell == Marks.X)
-                {
-                    <img src="icons/x.svg" class="w-1/2" alt="X mark"/>
-                }
-                else if (cell == Marks.O)
-                {
-                    <img src="icons/o.svg" class="w-3/5" alt="O mark"/>
-                }
-            </button>
+          <img src="icons/x.svg" class="w-1/2" alt="X mark"/>
         }
+        else if (cell == Marks.O)
+        {
+          <img src="icons/o.svg" class="w-3/5" alt="O mark"/>
+        }
+      </button>
     }
+  }
 </div>
 
 @code {
 
-    [Parameter]
-    public Marks[]? GridCells { get; set; }
+  [Parameter]
+  public Marks[]? GridCells { get; set; }
 
-    [Parameter]
-    public Marks ActiveMark { get; set; }
+  [Parameter]
+  public Marks ActiveMark { get; set; }
 
-    [Parameter]
-    public EventCallback<Move> OnClickFunction { get; set; }
+  [Parameter]
+  public EventCallback<Move> OnClickFunction { get; set; }
 
-    [Parameter]
-    public bool CanMakeMove { get; set; }
+  [Parameter]
+  public bool CanMakeMove { get; set; }
 
-    private void PlaceMark(Marks cell, int index)
+  private void PlaceMark(Marks cell, int index)
+  {
+    var model = new Move
     {
-        var model = new Move
-        {
-            Mark = ActiveMark,
-            Index = index
-        };
+      Mark = ActiveMark,
+      Index = index
+    };
 
-        OnClickFunction.InvokeAsync(model);
-    }
+    OnClickFunction.InvokeAsync(model);
+  }
 
 }

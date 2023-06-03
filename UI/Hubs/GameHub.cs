@@ -37,7 +37,9 @@ public class GameHub : Hub
           Mark = Marks.O,
           HasTurn = false
         };
+
         await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
+
         _gameEngine.JoinGame(gameCode, guest);
       }
       else
@@ -50,7 +52,9 @@ public class GameHub : Hub
           Mark = Marks.X,
           HasTurn = true
         };
+
         await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
+
         _gameEngine.StartGame(gameCode, host);
       }
 
@@ -59,6 +63,7 @@ public class GameHub : Hub
       if (game is not null)
       {
         var gameDto = _gameMapper.Convert(game);
+
         await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
       }
       else
