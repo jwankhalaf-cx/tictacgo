@@ -23,19 +23,21 @@ public class GameHub : Hub
 
   public override async Task OnConnectedAsync()
   {
-    await base.OnConnectedAsync();
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
       if (gameCode == "checkinggamecode") return;
-      
+
       var gameExists = _gameEngine.GameExists(gameCode);
-      var notAllowedToJoin = _gameEngine.GetGame(gameCode)?.CanStart();
-      if (notAllowedToJoin is true)
+
+      var gameAlreadyHasTwoPlayers = _gameEngine.GetGame(gameCode)?.CanStart();
+
+      if (gameAlreadyHasTwoPlayers is true)
       {
         await Clients.Clients(Context.ConnectionId).SendAsync("NotAllowedToJoin", true);
+
         return;
       }
-      
+
       if (gameExists)
       {
         Player guest = new()
@@ -78,7 +80,6 @@ public class GameHub : Hub
       {
         await Clients.Group(gameCode).SendAsync("ShowError", "game not found");
       }
-      
     }
   }
 
@@ -87,7 +88,9 @@ public class GameHub : Hub
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
       _gameEngine.LeaveGame(gameCode, Context.ConnectionId);
+
       await Groups.RemoveFromGroupAsync(Context.ConnectionId, gameCode);
+
       await base.OnDisconnectedAsync(exception);
     }
   }
@@ -110,17 +113,12 @@ public class GameHub : Hub
   public async void GameStatus(string gameCode)
   {
     var game = _gameEngine.GetGame(gameCode);
+
     if (game is not null && game.CanStart())
-    {
       await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "NotAllowed");
-    }
     else if (game is null)
-    {
       await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "WrongCode");
-    }
     else
-    {
       await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "CanJoin");
-    }
   }
 }
