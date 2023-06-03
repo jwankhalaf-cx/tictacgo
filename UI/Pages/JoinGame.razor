@@ -46,15 +46,6 @@
     if (_hubConnection is not null)
     {
       await _hubConnection.InvokeAsync("GameExist", GameCode.ToLower());
-      await DisposeAsync();
-    }
-
-    async ValueTask DisposeAsync()
-    {
-      if (_hubConnection is not null)
-      {
-        await _hubConnection.DisposeAsync();
-      }
     }
   }
 
