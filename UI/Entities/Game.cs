@@ -74,8 +74,20 @@ public class Game
     switch (win)
     {
       case false:
-        return !CanContinue() ? GameOutcome.Draw : null;
+        if (!CanContinue())
+        {
+          if (Host is not null && Guest is not null)
+          {
+            Host.HasTurn = false;
+            Guest.HasTurn = false;
+          }
 
+          return GameOutcome.Draw;
+        }
+        else
+        {
+          return null;
+        }
       case true:
         if (Host is not null && Host.ConnectionId == model.ConnectionId && Host.Mark == model.Mark)
         {
