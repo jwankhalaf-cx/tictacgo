@@ -78,10 +78,10 @@ public class Game
         {
           if (Host is not null && Guest is not null)
           {
-          Host.HasTurn = false;
-          Guest.HasTurn = false;
+            Host.HasTurn = false;
+            Guest.HasTurn = false;
           }
-          
+
           return GameOutcome.Draw;
         }
         else
