@@ -1,5 +1,11 @@
+@inject IJSRuntime JSRuntime
+
 <div class="mb-8 border rounded-lg border-white p-2.5 bg-slate-900">
   <h3 class="text-6xl text-amber-400 font-bold text-center tracking-widest uppercase">@GameShareCode</h3>
+</div>
+
+<div class="flex flex-row place-content-end mb-4">
+  <a @onclick="CopyToClipboard" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 border border-white rounded-r-full rounded-l-full cursor-pointer active:border-green-700 active:text-green-700">Copy Code</a>
 </div>
 
 <h4 class="font-['Quicksand'] text-slate-200 text-center mb-16">Share code with the other player</h4>
@@ -29,4 +35,9 @@
 {
   [Parameter]
   public required string GameShareCode { get; set; }
+
+  private async Task CopyToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", GameShareCode);
+    }
 }
