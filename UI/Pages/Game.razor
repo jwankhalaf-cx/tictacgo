@@ -34,7 +34,7 @@
         <LoserScreen Loser="@_host"/>
       }
     }
-    else if (_host != null && !_host.HasTurn && _guest != null && !_guest.HasTurn)
+    else if (_host is {HasTurn: false } && _guest is {HasTurn: false })
     {
       if (_host.ConnectionId == _clientConnectionId)
       {
