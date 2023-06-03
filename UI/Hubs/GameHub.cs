@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using UI.Enums;
 using UI.Mappers;
 using UI.Models;
 using UI.Services.Interfaces;
 using Game = UI.Entities.Game;
-using Player = UI.Entities.Player;
 
 namespace UI.Hubs;
 
@@ -29,33 +27,15 @@ public class GameHub : Hub
 
       if (gameExists)
       {
-        Player guest = new()
-        {
-          ConnectionId = Context.ConnectionId,
-          Name = "Emma",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-          Mark = Marks.O,
-          HasTurn = false
-        };
-
         await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
 
-        _gameEngine.JoinGame(gameCode, guest);
+        _gameEngine.JoinGame(gameCode, Context.ConnectionId);
       }
       else
       {
-        Player host = new()
-        {
-          ConnectionId = Context.ConnectionId,
-          Name = "Dan",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
-          Mark = Marks.X,
-          HasTurn = true
-        };
-
         await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
 
-        _gameEngine.StartGame(gameCode, host);
+        _gameEngine.StartGame(gameCode, Context.ConnectionId);
       }
 
       var game = _gameEngine.GetGame(gameCode);
@@ -94,6 +74,18 @@ public class GameHub : Hub
       // check if last move was a win or draw
       game.HasOutcome(model);
 
+      var gameDto = _gameMapper.Convert(game);
+
+      await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
+    }
+  }
+
+  public async Task PlayNameChanged(string gameCode, string connectionId, string name)
+  {
+    var game = _gameEngine.SetPlayerName(gameCode, connectionId, name);
+
+    if (game is not null)
+    {
       var gameDto = _gameMapper.Convert(game);
 
       await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);

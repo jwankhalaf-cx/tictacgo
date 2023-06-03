@@ -62,24 +62,7 @@
   }
   else
   {
-    if (_gameCanStart)
-    {
-      <div class="flex justify-center gap-9 pb-6">
-        <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
-
-        <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
-      </div>
-
-      <GameGrid
-        GridCells="@_gameBoard"
-        ActiveMark="@_activeMark"
-        OnClickFunction="@MakeMove"
-        CanMakeMove="@CanMakeMove()"/>
-    }
-    else
-    {
-      <GameCode GameShareCode="@GameCode"/>
-    }
+    <GameCode GameShareCode="@GameCode" OnNameInputFunction="@NameChanged"/>
   }
 
 </div>
@@ -157,6 +140,14 @@
     }
 
     return _guest.HasTurn && _guest.ConnectionId == _hubConnection?.ConnectionId;
+  }
+
+  private async Task NameChanged(string? name)
+  {
+    if (_hubConnection is not null)
+    {
+      await _hubConnection.SendAsync("PlayNameChanged", GameCode, _clientConnectionId, name);
+    }
   }
 
   public async ValueTask DisposeAsync()
