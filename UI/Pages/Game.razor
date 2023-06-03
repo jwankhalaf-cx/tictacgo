@@ -103,6 +103,14 @@
       .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
       .Build();
 
+    _hubConnection.On<bool>("NotAllowedToJoin", notAllowedToJoin =>
+    {
+      Navigation.NavigateTo($"/ErrorPage", new NavigationOptions
+      {
+        HistoryEntryState = "Navigation state"
+      });
+    });
+
     _hubConnection.On<Models.Game>("RenderGame", game =>
     {
       _gameBoard = game.Board;

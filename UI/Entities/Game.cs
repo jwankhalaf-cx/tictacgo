@@ -41,6 +41,8 @@ public class Game
 
   public void Move(Move move)
   {
+    if (_gameBoard[move.Index] != Marks.NotSet) return;
+
     if (Host != null && Host.ConnectionId == move.ConnectionId)
     {
       Host.HasTurn = false;
