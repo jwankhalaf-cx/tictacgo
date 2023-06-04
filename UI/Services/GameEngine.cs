@@ -68,4 +68,12 @@ public class GameEngine : IGameEngine
 
     return game;
   }
+
+  public Game? ResetGame(string gameCode)
+  {
+    var game = GetGame(gameCode);
+    game?.RestartGame();
+    _memoryCache.Set(gameCode, game);
+    return game;
+  }
 }

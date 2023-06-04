@@ -17,4 +17,5 @@ public interface IGameEngine
   Game? GetGame(string gameCode);
 
   Game? MakeMove(string gameCode, Move move);
+  Game? ResetGame(string gameCode);
 }

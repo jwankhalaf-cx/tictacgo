@@ -132,4 +132,12 @@ public class Game
     return (_gameBoard[0] == mark && _gameBoard[4] == mark && _gameBoard[8] == mark) ||
            (_gameBoard[2] == mark && _gameBoard[4] == mark && _gameBoard[6] == mark);
   }
+
+  public void RestartGame()
+  {
+    for (var i = 0; i < _gameBoard.Length; i++)
+    {
+      _gameBoard[i] = Marks.NotSet;
+    }
+  }
 }

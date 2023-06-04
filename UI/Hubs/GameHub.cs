@@ -110,6 +110,16 @@ public class GameHub : Hub
     }
   }
 
+  public async Task RestartGame(string gameCode)
+  {
+    var game = _gameEngine.ResetGame(gameCode);
+    if (game is not null)
+    {
+      var gameDto = _gameMapper.Convert(game);
+      await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
+    }
+  }
+
   public async void GameStatus(string gameCode)
   {
     var game = _gameEngine.GetGame(gameCode);
