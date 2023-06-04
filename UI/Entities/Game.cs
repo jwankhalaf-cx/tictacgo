@@ -138,6 +138,14 @@ public class Game
     for (var i = 0; i < _gameBoard.Length; i++)
     {
       _gameBoard[i] = Marks.NotSet;
+      if (Host is not null && Guest is not null)
+      {
+        Host.HasWon = false;
+        Guest.HasWon = false;
+        Host.HasTurn = false;
+        Guest.HasTurn = true;
+      }
+      
     }
   }
 }

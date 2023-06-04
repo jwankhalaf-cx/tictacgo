@@ -16,33 +16,33 @@
     {
       @if (_host.ConnectionId == _clientConnectionId)
       {
-        <WinnerScreen Winner="@_host"/>
+        <WinnerScreen Winner="@_host" RestartGame="@RestartGame"/>
       }
       else
       {
-        <LoserScreen Loser="@_guest"/>
+        <LoserScreen Loser="@_guest" RestartGame="@RestartGame"/>
       }
     }
     else if (_guest is {HasWon: true })
     {
       @if (_guest.ConnectionId == _clientConnectionId)
       {
-        <WinnerScreen Winner="@_guest"/>
+        <WinnerScreen Winner="@_guest" RestartGame="@RestartGame"/>
       }
       else
       {
-        <LoserScreen Loser="@_host"/>
+        <LoserScreen Loser="@_host" RestartGame="@RestartGame"/>
       }
     }
     else if (_host is {HasTurn: false } && _guest is {HasTurn: false })
     {
       if (_host.ConnectionId == _clientConnectionId)
       {
-        <DrawScreen Player="@_host"/>
+        <DrawScreen Player="@_host" RestartGame="@RestartGame"/>
       }
       else
       {
-        <DrawScreen Player="@_guest"/>
+        <DrawScreen Player="@_guest" RestartGame="@RestartGame"/>
       }
     }
     else
@@ -165,6 +165,14 @@
     }
 
     return _guest.HasTurn && _guest.ConnectionId == _hubConnection?.ConnectionId;
+  }
+
+  public async Task RestartGame()
+  {
+    if (_hubConnection is not null)
+    {
+      await _hubConnection.SendAsync("RestartGame", GameCode);
+    }
   }
 
   public async ValueTask DisposeAsync()

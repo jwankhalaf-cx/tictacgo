@@ -12,7 +12,7 @@
   <h1 class="font-['Quicksand'] text-center text-slate-200 text-3xl font-medium mt-8 font-semibold">It's a draw!</h1>
 
   <div class="flex flex-col self-stretch mt-8">
-    <RestartButton />
+    <RestartButton RestartGame="@RestartGame"/>
   </div>
 </div>
 
@@ -20,5 +20,7 @@
 
   [Parameter]
   public required Player Player { get; set; }
-
+  
+  [Parameter]
+  public EventCallback RestartGame { get; set; }
 }
