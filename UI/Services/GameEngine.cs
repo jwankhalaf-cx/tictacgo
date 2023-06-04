@@ -25,7 +25,7 @@ public class GameEngine : IGameEngine
 
   public void StartGame(string gameCode, string connectionId)
   {
-    Player host = GenerateRandomPlayer(connectionId);
+    Player host = GenerateRandomPlayer(connectionId, Marks.X, true);
 
     var game = new Game(gameCode, host);
 
@@ -40,14 +40,7 @@ public class GameEngine : IGameEngine
 
     if (game == null || game.CanStart()) return;
 
-    Player guest = new()
-    {
-      ConnectionId = connectionId,
-      Name = "Emma",
-      ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-      Mark = Marks.O,
-      HasTurn = false
-    };
+    Player guest = GenerateRandomPlayer(connectionId, Marks.O, false);
 
     game.AddGuest(guest);
 
@@ -90,7 +83,7 @@ public class GameEngine : IGameEngine
     return game;
   }
 
-  private static Player GenerateRandomPlayer(string connectionId)
+  private static Player GenerateRandomPlayer(string connectionId, Marks mark, bool hasTurn)
   {
     string randomName = $"User{Guid.NewGuid().ToString("n")[..6]}";
 
@@ -99,8 +92,8 @@ public class GameEngine : IGameEngine
       ConnectionId = connectionId,
       Name = randomName,
       ImageUrl = $"https://ui-avatars.com/api/?name={randomName}&size=80&length=1&bold=true&format=svg",
-      Mark = Marks.X,
-      HasTurn = true
+      Mark = mark,
+      HasTurn = hasTurn
     };
 
     return player;
