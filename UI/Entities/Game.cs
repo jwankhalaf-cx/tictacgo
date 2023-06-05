@@ -138,14 +138,24 @@ public class Game
     for (var i = 0; i < _gameBoard.Length; i++)
     {
       _gameBoard[i] = Marks.NotSet;
-      if (Host is not null && Guest is not null)
-      {
-        Host.HasWon = false;
-        Guest.HasWon = false;
-        Host.HasTurn = false;
-        Guest.HasTurn = true;
-      }
       
+    }
+
+    if (Host is null || Guest is null) return;
+    Host.HasWon = false;
+    Guest.HasWon = false;
+    
+    var rnd = new Random().Next(0, 2);
+    
+    if (rnd == 0)
+    {
+      Host.HasTurn = true;
+      Guest.HasTurn = false;
+    }
+    else
+    {
+      Host.HasTurn = false;
+      Guest.HasTurn = true;
     }
   }
 }
