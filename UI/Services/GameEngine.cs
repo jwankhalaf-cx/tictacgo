@@ -24,7 +24,7 @@ public class GameEngine : IGameEngine
 
   public void StartGame(string gameCode, Player host)
   {
-    var game = new Game(gameCode, host);
+    Game game = new Game(gameCode, host);
 
     _memoryCache.Set(gameCode, game);
   }
@@ -33,7 +33,7 @@ public class GameEngine : IGameEngine
   {
     if (!GameExists(gameCode)) return;
 
-    var game = GetGame(gameCode);
+    Game? game = GetGame(gameCode);
 
     if (game == null || game.CanStart()) return;
 
@@ -44,7 +44,7 @@ public class GameEngine : IGameEngine
 
   public void LeaveGame(string gameCode, string connectionId)
   {
-    var game = GetGame(gameCode);
+    Game? game = GetGame(gameCode);
 
     game?.RemovePlayer(connectionId);
 
@@ -60,9 +60,20 @@ public class GameEngine : IGameEngine
 
   public Game? MakeMove(string gameCode, Move move)
   {
-    var game = GetGame(gameCode);
+    Game? game = GetGame(gameCode);
 
     game?.Move(move);
+
+    _memoryCache.Set(gameCode, game);
+
+    return game;
+  }
+
+  public Game? ResetGame(string gameCode)
+  {
+    Game? game = GetGame(gameCode);
+
+    game?.ResetGame();
 
     _memoryCache.Set(gameCode, game);
 

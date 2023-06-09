@@ -21,10 +21,10 @@ public class GameTests
   public void HasOutcome_WhenNoWinMatchingPatternsExist_ShouldReturnDrawOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.Draw);
+    Game game = SetupGame(MarkPositions.Draw);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -39,10 +39,10 @@ public class GameTests
   public void HasOutcome_WhenNoWinMatchingPatternsExistAndBoardIsNotFull_ShouldReturnNullOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.RandomWithBoardNotFull);
+    Game game = SetupGame(MarkPositions.RandomWithBoardNotFull);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().BeNull();
@@ -72,13 +72,13 @@ public class GameTests
 
     const string gameId = "g00";
 
-    var game = new Game(gameId, host);
+    Game game = new Game(gameId, host);
 
     game.AddGuest(guest);
 
-    var moves = GetMoves(positions);
+    List<Move> moves = GetMoves(positions);
 
-    foreach (var move in moves) game.Move(move);
+    foreach (Move move in moves) game.Move(move);
 
     return game;
   }
@@ -91,19 +91,19 @@ public class GameTests
     {
       case MarkPositions.ColumnOne:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 0,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 3,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 6,
           Mark = Marks.X
@@ -114,19 +114,19 @@ public class GameTests
       }
       case MarkPositions.ColumnTwo:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 1,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 4,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 7,
           Mark = Marks.X
@@ -137,19 +137,19 @@ public class GameTests
       }
       case MarkPositions.ColumnThree:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 2,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 5,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 8,
           Mark = Marks.X
@@ -160,19 +160,19 @@ public class GameTests
       }
       case MarkPositions.RowOne:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 0,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 1,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 2,
           Mark = Marks.X
@@ -183,19 +183,19 @@ public class GameTests
       }
       case MarkPositions.RowTwo:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 3,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 4,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 5,
           Mark = Marks.X
@@ -206,19 +206,19 @@ public class GameTests
       }
       case MarkPositions.RowThree:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 6,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 7,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 8,
           Mark = Marks.X
@@ -229,19 +229,19 @@ public class GameTests
       }
       case MarkPositions.DiagonalForward:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 2,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 4,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 6,
           Mark = Marks.X
@@ -252,19 +252,19 @@ public class GameTests
       }
       case MarkPositions.DiagonalBackward:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 0,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 4,
           Mark = Marks.X
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 8,
           Mark = Marks.X
@@ -275,55 +275,55 @@ public class GameTests
       }
       case MarkPositions.Draw:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 0,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 1,
           Mark = Marks.O
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 2,
           Mark = Marks.X
         };
 
-        var move4 = new Move
+        Move move4 = new Move
         {
           Index = 3,
           Mark = Marks.X
         };
 
-        var move5 = new Move
+        Move move5 = new Move
         {
           Index = 4,
           Mark = Marks.X
         };
 
-        var move6 = new Move
+        Move move6 = new Move
         {
           Index = 5,
           Mark = Marks.O
         };
 
-        var move7 = new Move
+        Move move7 = new Move
         {
           Index = 6,
           Mark = Marks.O
         };
 
-        var move8 = new Move
+        Move move8 = new Move
         {
           Index = 7,
           Mark = Marks.X
         };
 
-        var move9 = new Move
+        Move move9 = new Move
         {
           Index = 8,
           Mark = Marks.O
@@ -334,25 +334,25 @@ public class GameTests
       }
       case MarkPositions.RandomWithBoardNotFull:
       {
-        var move = new Move
+        Move move = new Move
         {
           Index = 0,
           Mark = Marks.X
         };
 
-        var move2 = new Move
+        Move move2 = new Move
         {
           Index = 1,
           Mark = Marks.O
         };
 
-        var move3 = new Move
+        Move move3 = new Move
         {
           Index = 2,
           Mark = Marks.X
         };
 
-        var move4 = new Move
+        Move move4 = new Move
         {
           Index = 3,
           Mark = Marks.X
@@ -375,10 +375,10 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInFirstRow_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.RowOne);
+    Game game = SetupGame(MarkPositions.RowOne);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -389,10 +389,10 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInSecondRow_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.RowTwo);
+    Game game = SetupGame(MarkPositions.RowTwo);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -403,10 +403,10 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInThirdRow_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.RowThree);
+    Game game = SetupGame(MarkPositions.RowThree);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -421,11 +421,11 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInFirstColumn_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.ColumnOne);
+    Game game = SetupGame(MarkPositions.ColumnOne);
 
     //act
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -436,10 +436,10 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInSecondColumn_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.ColumnTwo);
+    Game game = SetupGame(MarkPositions.ColumnTwo);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -450,10 +450,10 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksInThirdColumn_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.ColumnThree);
+    Game game = SetupGame(MarkPositions.ColumnThree);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -468,10 +468,10 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksForwardDiagonally_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.DiagonalForward);
+    Game game = SetupGame(MarkPositions.DiagonalForward);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();
@@ -482,10 +482,10 @@ public class GameTests
   public void HasOutcome_WhenThreeMatchingMarksBackwardDiagonally_ShouldReturnWinningOutcome()
   {
     // arrange
-    var game = SetupGame(MarkPositions.DiagonalBackward);
+    Game game = SetupGame(MarkPositions.DiagonalBackward);
 
     //act
-    var outcome = game.HasOutcome(_model);
+    GameOutcome? outcome = game.HasOutcome(_model);
 
     // assert
     outcome.Should().NotBeNull();

@@ -13,7 +13,7 @@ public class GameEntityToModelMapper : IConverter<Game, Models.Game>
 
   public Models.Game Convert(Game sourceObject)
   {
-    var game = new Models.Game();
+    Models.Game game = new Models.Game();
     game.Id = sourceObject.Id;
     if (sourceObject.Host is not null) game.Host = _playerMapper.Convert(sourceObject.Host);
     if (sourceObject.Guest is not null) game.Guest = _playerMapper.Convert(sourceObject.Guest);
