@@ -23,16 +23,25 @@ public class GameHub : Hub
   {
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      if (gameCode == "checkinggamecode") return;
+      bool gameExists = _gameEngine.GameExists(gameCode);
 
-      var gameExists = _gameEngine.GameExists(gameCode);
+      string[]? uriPath = Context.GetHttpContext()?.Request.Path.ToString().Split('/');
 
-      var gameAlreadyHasTwoPlayers = _gameEngine.GetGame(gameCode)?.CanStart();
+      string lastSegment = string.Empty;
+
+      if (uriPath is { Length: > 3 }) lastSegment = uriPath[3];
+
+      if (!string.IsNullOrEmpty(lastSegment) && lastSegment == "join" && !gameExists)
+      {
+        await Clients.Caller.SendAsync("NotAllowedToJoin");
+        return;
+      }
+
+      bool? gameAlreadyHasTwoPlayers = _gameEngine.GetGame(gameCode)?.CanStart();
 
       if (gameAlreadyHasTwoPlayers is true)
       {
-        await Clients.Clients(Context.ConnectionId).SendAsync("NotAllowedToJoin", true);
-
+        await Clients.Caller.SendAsync("NotAllowedToJoin");
         return;
       }
 
@@ -49,11 +58,11 @@ public class GameHub : Hub
         _gameEngine.StartGame(gameCode, Context.ConnectionId);
       }
 
-      var game = _gameEngine.GetGame(gameCode);
+      Game? game = _gameEngine.GetGame(gameCode);
 
       if (game is not null)
       {
-        var gameDto = _gameMapper.Convert(game);
+        Models.Game gameDto = _gameMapper.Convert(game);
 
         await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
       }
@@ -78,40 +87,40 @@ public class GameHub : Hub
 
   public async Task MakeMove(string gameCode, Move model)
   {
-    var game = _gameEngine.MakeMove(gameCode, model);
+    Game? game = _gameEngine.MakeMove(gameCode, model);
 
     if (game is not null)
     {
       // check if last move was a win or draw
       game.HasOutcome(model);
 
-      var gameDto = _gameMapper.Convert(game);
+      Models.Game gameDto = _gameMapper.Convert(game);
 
       await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
     }
   }
 
-  public async Task PlayNameChanged(string gameCode, string connectionId, string name)
+  public async Task RestartGame(string gameCode)
   {
-    var game = _gameEngine.SetPlayerName(gameCode, connectionId, name);
+    Game? game = _gameEngine.ResetGame(gameCode);
 
     if (game is not null)
     {
-      var gameDto = _gameMapper.Convert(game);
+      Models.Game gameDto = _gameMapper.Convert(game);
 
       await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
     }
   }
 
-  public async void GameStatus(string gameCode)
+  public async Task PlayerNameChanged(string gameCode, string connectionId, string name)
   {
-    var game = _gameEngine.GetGame(gameCode);
+    Game? game = _gameEngine.SetPlayerName(gameCode, connectionId, name);
 
-    if (game is not null && game.CanStart())
-      await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "NotAllowed");
-    else if (game is null)
-      await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "WrongCode");
-    else
-      await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "CanJoin");
+    if (game is not null)
+    {
+      Models.Game gameDto = _gameMapper.Convert(game);
+
+      await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
+    }
   }
 }

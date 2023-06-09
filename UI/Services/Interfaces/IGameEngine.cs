@@ -18,4 +18,6 @@ public interface IGameEngine
   Game? MakeMove(string gameCode, Move move);
 
   Game? SetPlayerName(string gameCode, string connectionId, string name);
+
+  Game? ResetGame(string gameCode);
 }

@@ -1,3 +1,5 @@
+@inject IJSRuntime JSRuntime
+
 <h1 class="font-['Pacifico'] text-5xl focus:outline-none text-center mb-12">
   <span class="text-[#d877aa]">Share</span> <span class="text-[#f59771]">Code</span>
 </h1>
@@ -12,6 +14,8 @@
     value="@GameShareCode"
     readonly="readonly"/>
 </div>
+
+<button @onclick="@CopyToClipboard" class="font-['Quicksand'] text-xl text-center text-slate-200 w-full mb-4 p-2 border border-white rounded-r-full rounded-l-full cursor-pointer">Copy Code</button>
 
 <div class="flex flex-col mb-4">
   <label class="font-['Quicksand'] text-slate-200 mb-1.5 font-semibold" for="player-name">Your name</label>
@@ -57,5 +61,10 @@
   private void HandlePlayerNameChange(string? name)
   {
     OnNameInputFunction.InvokeAsync(name);
+  }
+
+  private async Task CopyToClipboard()
+  {
+    await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", GameShareCode);
   }
 }
