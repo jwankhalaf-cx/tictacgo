@@ -5,7 +5,7 @@ using UI.Mappers;
 using UI.Services;
 using UI.Services.Interfaces;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // add services to the container.
 builder.Services.AddSingleton<IGameEngine, GameEngine>();
@@ -19,7 +19,7 @@ builder.Services.AddResponseCompression(opts =>
     new[] { "application/octet-stream" });
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.UseResponseCompression();
 

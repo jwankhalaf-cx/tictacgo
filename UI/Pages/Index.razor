@@ -25,7 +25,7 @@
 
   private void StartGame()
   {
-    var gameCode = Guid.NewGuid().ToString("n")[..6];
+    string gameCode = Guid.NewGuid().ToString("n")[..6];
 
     Navigation.NavigateTo($"/game/{gameCode}", new NavigationOptions
     {

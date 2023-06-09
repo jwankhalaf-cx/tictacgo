@@ -3,10 +3,10 @@
 <div class="bg-slate-600 grid grid-cols-3 grid-rows-3 gap-2 h-80 w-80 m-auto mb-2 p-2 rounded-lg">
   @if (GridCells is not null)
   {
-    @for (var i = 0; i < GridCells.Length; i++)
+    @for (int i = 0; i < GridCells.Length; i++)
     {
-      var cell = GridCells[i];
-      var index = i;
+      Marks cell = GridCells[i];
+      int index = i;
       <button @onclick="() => PlaceMark(cell, index)" class="bg-slate-800 rounded-lg @(CanMakeMove ? "cursor-pointer" : "cursor-not-allowed") flex active:bg-slate-700 items-center justify-center">
         @if (cell == Marks.X)
         {
@@ -37,7 +37,7 @@
 
   private void PlaceMark(Marks cell, int index)
   {
-    var model = new Move
+    Move model = new Move
     {
       Mark = ActiveMark,
       Index = index
