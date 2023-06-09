@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.SignalR;
-using UI.Enums;
 using UI.Mappers;
 using UI.Models;
 using UI.Services.Interfaces;
 using Game = UI.Entities.Game;
-using Player = UI.Entities.Player;
 
 namespace UI.Hubs;
 
@@ -25,47 +23,39 @@ public class GameHub : Hub
   {
     if (Context.GetHttpContext()?.GetRouteValue("GameCode") is string gameCode)
     {
-      if (gameCode == "checkinggamecode") return;
-
       bool gameExists = _gameEngine.GameExists(gameCode);
+
+      string[]? uriPath = Context.GetHttpContext()?.Request.Path.ToString().Split('/');
+
+      string lastSegment = string.Empty;
+
+      if (uriPath is { Length: > 3 }) lastSegment = uriPath[3];
+
+      if (!string.IsNullOrEmpty(lastSegment) && lastSegment == "join" && !gameExists)
+      {
+        await Clients.Caller.SendAsync("NotAllowedToJoin");
+        return;
+      }
 
       bool? gameAlreadyHasTwoPlayers = _gameEngine.GetGame(gameCode)?.CanStart();
 
       if (gameAlreadyHasTwoPlayers is true)
       {
-        await Clients.Clients(Context.ConnectionId).SendAsync("NotAllowedToJoin", true);
-
+        await Clients.Caller.SendAsync("NotAllowedToJoin");
         return;
       }
 
       if (gameExists)
       {
-        Player guest = new()
-        {
-          ConnectionId = Context.ConnectionId,
-          Name = "Emma",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-PNG-Images-HD.png",
-          Mark = Marks.O,
-          HasTurn = false
-        };
-
         await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
 
-        _gameEngine.JoinGame(gameCode, guest);
+        _gameEngine.JoinGame(gameCode, Context.ConnectionId);
       }
       else
       {
-        Player host = new()
-        {
-          ConnectionId = Context.ConnectionId,
-          Name = "Dan",
-          ImageUrl = "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile-Vector.png",
-          Mark = Marks.X,
-          HasTurn = true
-        };
         await Groups.AddToGroupAsync(Context.ConnectionId, gameCode);
 
-        _gameEngine.StartGame(gameCode, host);
+        _gameEngine.StartGame(gameCode, Context.ConnectionId);
       }
 
       Game? game = _gameEngine.GetGame(gameCode);
@@ -122,15 +112,15 @@ public class GameHub : Hub
     }
   }
 
-  public async void GameStatus(string gameCode)
+  public async Task PlayerNameChanged(string gameCode, string connectionId, string name)
   {
-    Game? game = _gameEngine.GetGame(gameCode);
+    Game? game = _gameEngine.SetPlayerName(gameCode, connectionId, name);
 
-    if (game is not null && game.CanStart())
-      await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "NotAllowed");
-    else if (game is null)
-      await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "WrongCode");
-    else
-      await Clients.Clients(Context.ConnectionId).SendAsync("CheckGame", "CanJoin");
+    if (game is not null)
+    {
+      Models.Game gameDto = _gameMapper.Convert(game);
+
+      await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
+    }
   }
 }

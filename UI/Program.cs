@@ -39,6 +39,7 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapHub<GameHub>("/gamehub/{GameCode}");
+app.MapHub<GameHub>("/gamehub/{GameCode}/join");
 app.MapFallbackToPage("/_Host");
 
 app.Run();

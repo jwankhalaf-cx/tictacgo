@@ -1,4 +1,5 @@
 @page "/game/{gameCode}";
+@page "/game/{gameCode}/join";
 
 @inject NavigationManager Navigation
 @using Microsoft.AspNetCore.SignalR.Client
@@ -47,39 +48,41 @@
     }
     else
     {
-      <div class="flex justify-center gap-9 pb-6">
-        <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
+      if (_isJoiner)
+      {
+        <div class="flex flex-col mb-4">
+          <label class="font-['Quicksand'] text-slate-200 mb-1.5 font-semibold" for="player-name">Your name</label>
 
-        <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
-      </div>
+          <input
+            class="text-6xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
+            type="text"
+            id="player-name"
+            @bind="_joinerName"/>
+        </div>
 
-      <GameGrid
-        GridCells="@_gameBoard"
-        ActiveMark="@_activeMark"
-        OnClickFunction="@MakeMove"
-        CanMakeMove="@CanMakeMove()"/>
+        <h4 class="font-['Quicksand'] text-slate-400 mb-16">Leave blank for a randomly generated name</h4>
+
+        <button @onclick="@HandleJoinerClick" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Start Game</button>
+      }
+      else
+      {
+        <div class="flex justify-center gap-9 pb-6">
+          <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
+
+          <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
+        </div>
+
+        <GameGrid
+          GridCells="@_gameBoard"
+          ActiveMark="@_activeMark"
+          OnClickFunction="@MakeMove"
+          CanMakeMove="@CanMakeMove()"/>
+      }
     }
   }
   else
   {
-    if (_gameCanStart)
-    {
-      <div class="flex justify-center gap-9 pb-6">
-        <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
-
-        <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
-      </div>
-
-      <GameGrid
-        GridCells="@_gameBoard"
-        ActiveMark="@_activeMark"
-        OnClickFunction="@MakeMove"
-        CanMakeMove="@CanMakeMove()"/>
-    }
-    else
-    {
-      <GameCode GameShareCode="@GameCode"/>
-    }
+    <GameCode GameShareCode="@GameCode" OnNameInputFunction="@NameChanged"/>
   }
 
 </div>
@@ -96,14 +99,22 @@
   private Player? _guest;
   private Marks _activeMark;
   private string _clientConnectionId = string.Empty;
+  private bool _isJoiner;
+  private string _joinerName = string.Empty;
 
   protected override async Task OnInitializedAsync()
   {
+    string query = new Uri(Navigation.Uri).Segments[^1];
+
+    _isJoiner = query == "join";
+
+    Uri uri = Navigation.ToAbsoluteUri(query == "join" ? $"/gamehub/{GameCode}/join" : $"/gamehub/{GameCode}");
+
     _hubConnection = new HubConnectionBuilder()
-      .WithUrl(Navigation.ToAbsoluteUri($"/gamehub/{GameCode}"))
+      .WithUrl(uri)
       .Build();
 
-    _hubConnection.On<bool>("NotAllowedToJoin", notAllowedToJoin =>
+    _hubConnection.On("NotAllowedToJoin", () =>
     {
       Navigation.NavigateTo($"/ErrorPage", new NavigationOptions
       {
@@ -167,7 +178,15 @@
     return _guest.HasTurn && _guest.ConnectionId == _hubConnection?.ConnectionId;
   }
 
-  public async Task RestartGame()
+  private async Task NameChanged(string? name)
+  {
+    if (_hubConnection is not null)
+    {
+      await _hubConnection.SendAsync("PlayerNameChanged", GameCode, _clientConnectionId, name);
+    }
+  }
+
+  private async Task RestartGame()
   {
     if (_hubConnection is not null)
     {
@@ -181,6 +200,13 @@
     {
       await _hubConnection.DisposeAsync();
     }
+  }
+
+  private async Task HandleJoinerClick()
+  {
+    await NameChanged(_joinerName);
+
+    _isJoiner = false;
   }
 
 }

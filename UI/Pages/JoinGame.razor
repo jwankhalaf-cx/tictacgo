@@ -1,7 +1,6 @@
-@page "/joingame"
+@page "/join"
 
 @inject NavigationManager Navigation
-@using Microsoft.AspNetCore.SignalR.Client
 
 <h1 class="font-['Pacifico'] text-5xl focus:outline-none text-center mb-12">
   <span class="text-[#d877aa]">Join</span> <span class="text-[#f59771]">Game</span>
@@ -15,68 +14,45 @@
     type="text"
     id="game-code"
     maxlength="6"
-    @bind="GameCode"/>
+    @oninput="e => HandleGameCodeInputChange(e.Value?.ToString())"/>
 </div>
-
 
 <div class="font-['Quicksand'] flex flex-col text-white m-20 align-center justify-between h-1/2">
-  <a
-    @onclick="@Start"
-    @onclick:preventDefault="true"
-    class="w-full inline-block font-['Quicksand'] text-xl text-center text-slate-200 p-2 border border-white rounded-r-full rounded-l-full cursor-pointer">
+  <button
+    @onclick="@Join"
+    class="w-full inline-block font-['Quicksand'] text-xl text-center text-slate-200 p-2 border border-white rounded-r-full rounded-l-full disabled:opacity-70 cursor-pointer"
+    disabled="@_joinGameIsDisabled">
     Join Game
-  </a>
+  </button>
 </div>
 
-<h3 class="text-3xl text-red-400 text-center">@GameStatusMessage</h3>
-
 @code {
+  private string? GameCode { get; set; } = string.Empty;
+  private bool _joinGameIsDisabled = true;
 
-  private string GameCode { get; set; } = string.Empty;
-  private HubConnection? _hubConnection;
-  private string GameStatusMessage { get; set; } = string.Empty;
-
-  protected override async Task OnInitializedAsync()
+  private void HandleGameCodeInputChange(string? gameCode)
   {
-    _hubConnection = new HubConnectionBuilder()
-      .WithUrl(Navigation.ToAbsoluteUri("/gamehub/checkinggamecode"))
-      .Build();
-
-    _hubConnection.On<string>("CheckGame", gameStatus =>
+    if (string.IsNullOrEmpty(gameCode))
     {
-      switch (gameStatus)
-      {
-        case "CanJoin":
-          Navigation.NavigateTo($"/game/{GameCode.ToLower()}", new NavigationOptions
-          {
-            HistoryEntryState = "Navigation state"
-          });
-          break;
-        case "WrongCode":
-          GameStatusMessage = "Oops, wrong code";
-          break;
-        case "NotAllowed":
-          Navigation.NavigateTo($"/ErrorPage", new NavigationOptions
-          {
-            HistoryEntryState = "Navigation state"
-          });
-          break;
-        default:
-          GameStatusMessage = "";
-          break;
-      }
+      _joinGameIsDisabled = true;
+    }
+    else
+    {
+      GameCode = gameCode;
+      _joinGameIsDisabled = false;
+    }
 
-      InvokeAsync(StateHasChanged);
-    });
-
-    await _hubConnection.StartAsync();
+    InvokeAsync(StateHasChanged);
   }
 
-  private async Task Start()
+  private void Join()
   {
-    if (_hubConnection is not null)
+    if (!string.IsNullOrEmpty(GameCode))
     {
-      await _hubConnection.SendAsync("GameStatus", GameCode.ToLower());
+      Navigation.NavigateTo($"/game/{GameCode?.ToLower()}/join", new NavigationOptions
+      {
+        HistoryEntryState = "Navigation state"
+      });
     }
   }
 

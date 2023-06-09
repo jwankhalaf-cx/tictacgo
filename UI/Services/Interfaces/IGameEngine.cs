@@ -1,6 +1,5 @@
 using UI.Models;
 using Game = UI.Entities.Game;
-using Player = UI.Entities.Player;
 
 namespace UI.Services.Interfaces;
 
@@ -8,15 +7,17 @@ public interface IGameEngine
 {
   bool GameExists(string gameCode);
 
-  void StartGame(string gameCode, Player host);
+  void StartGame(string gameCode, string connectionId);
 
-  void JoinGame(string gameCode, Player guest);
+  void JoinGame(string gameCode, string connectionId);
 
   void LeaveGame(string gameCode, string connectionId);
 
   Game? GetGame(string gameCode);
 
   Game? MakeMove(string gameCode, Move move);
+
+  Game? SetPlayerName(string gameCode, string connectionId, string name);
 
   Game? ResetGame(string gameCode);
 }

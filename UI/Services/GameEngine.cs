@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
+using UI.Enums;
 using UI.Models;
 using UI.Services.Interfaces;
 using Game = UI.Entities.Game;
@@ -22,20 +23,24 @@ public class GameEngine : IGameEngine
     return game is not null;
   }
 
-  public void StartGame(string gameCode, Player host)
+  public void StartGame(string gameCode, string connectionId)
   {
+    Player host = GenerateRandomPlayer(connectionId, Marks.X, true);
+
     Game game = new Game(gameCode, host);
 
     _memoryCache.Set(gameCode, game);
   }
 
-  public void JoinGame(string gameCode, Player guest)
+  public void JoinGame(string gameCode, string connectionId)
   {
     if (!GameExists(gameCode)) return;
 
     Game? game = GetGame(gameCode);
 
     if (game == null || game.CanStart()) return;
+
+    Player guest = GenerateRandomPlayer(connectionId, Marks.O, false);
 
     game.AddGuest(guest);
 
@@ -67,6 +72,33 @@ public class GameEngine : IGameEngine
     _memoryCache.Set(gameCode, game);
 
     return game;
+  }
+
+  public Game? SetPlayerName(string gameCode, string connectionId, string name)
+  {
+    Game? game = GetGame(gameCode);
+
+    game?.SetPlayerName(connectionId, name);
+
+    _memoryCache.Set(gameCode, game);
+
+    return game;
+  }
+
+  private static Player GenerateRandomPlayer(string connectionId, Marks mark, bool hasTurn)
+  {
+    string randomName = $"User{Guid.NewGuid().ToString("n")[..6]}";
+
+    Player player = new()
+    {
+      ConnectionId = connectionId,
+      Name = randomName,
+      ImageUrl = $"https://ui-avatars.com/api/?name={randomName}&size=80&length=1&bold=true&format=svg",
+      Mark = mark,
+      HasTurn = hasTurn
+    };
+
+    return player;
   }
 
   public Game? ResetGame(string gameCode)

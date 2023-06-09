@@ -135,6 +135,13 @@ public class Game
            (_gameBoard[2] == mark && _gameBoard[4] == mark && _gameBoard[6] == mark);
   }
 
+  public void SetPlayerName(string connectionId, string name)
+  {
+    if (Host?.ConnectionId == connectionId) Host?.SetNameAndAvatar(name);
+
+    if (Guest?.ConnectionId == connectionId) Guest?.SetNameAndAvatar(name);
+  }
+
   public void ResetGame()
   {
     _gameBoard = new[]
