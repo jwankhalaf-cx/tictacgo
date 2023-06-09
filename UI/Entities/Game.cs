@@ -5,12 +5,14 @@ namespace UI.Entities;
 
 public class Game
 {
-  private readonly Marks[] _gameBoard;
+  private bool _hostPlayedFirst;
+  private Marks[] _gameBoard;
 
   public Game(string id, Player host)
   {
     Id = id;
     Host = host;
+    _hostPlayedFirst = true;
     _gameBoard = new[]
     {
       Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet,
@@ -71,7 +73,7 @@ public class Game
 
   public GameOutcome? HasOutcome(Move model)
   {
-    var win = HasWinningRow(model.Mark) || HasWinningColumn(model.Mark) || HasDiagonalWon(model.Mark);
+    bool win = HasWinningRow(model.Mark) || HasWinningColumn(model.Mark) || HasDiagonalWon(model.Mark);
 
     switch (win)
     {
@@ -131,5 +133,32 @@ public class Game
   {
     return (_gameBoard[0] == mark && _gameBoard[4] == mark && _gameBoard[8] == mark) ||
            (_gameBoard[2] == mark && _gameBoard[4] == mark && _gameBoard[6] == mark);
+  }
+
+  public void ResetGame()
+  {
+    _gameBoard = new[]
+    {
+      Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet,
+      Marks.NotSet
+    };
+
+    if (Host is null || Guest is null) return;
+
+    Host.HasWon = false;
+    Guest.HasWon = false;
+
+    if (_hostPlayedFirst)
+    {
+      Host.HasTurn = false;
+      Guest.HasTurn = true;
+    }
+    else
+    {
+      Host.HasTurn = true;
+      Guest.HasTurn = false;
+    }
+
+    _hostPlayedFirst = !_hostPlayedFirst;
   }
 }
