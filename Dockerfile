@@ -18,6 +18,9 @@ WORKDIR /app
 # we now copy all the files (from local machine) to /app (in the container).
 COPY . .
 
+# run the tests
+RUN dotnet test
+
 # again, on the container (we are in /app folder)
 # we now publish the project into a folder called 'out'.
 RUN dotnet publish UI/UI.csproj -c Release -o out
