@@ -1,53 +1,57 @@
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JSRuntime;
 
-<h1 class="font-['Pacifico'] text-5xl focus:outline-none text-center mb-12">
-  <span class="text-[#d877aa]">Share</span> <span class="text-[#f59771]">Code</span>
-</h1>
+<div class="flex flex-col justify-between h-full">
+  <h1 class="font-['Pacifico'] text-5xl focus:outline-none text-center">
+    <span class="text-[#d877aa]">Share</span> <span class="text-[#f59771]">Code</span>
+  </h1>
 
-<div class="flex flex-col mb-4">
-  <label class="font-['Quicksand'] text-slate-200 mb-1.5 font-semibold" for="game-code">Unique Game Code</label>
+  <div class="flex flex-col">
+    <label class="font-['Quicksand'] text-slate-200 font-semibold" for="game-code">Unique Game Code</label>
 
-  <input
-    class="text-6xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest uppercase focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
-    type="text"
-    id="game-code"
-    value="@GameShareCode"
-    readonly="readonly"/>
-</div>
-
-<button @onclick="@CopyToClipboard" class="font-['Quicksand'] text-xl text-center text-slate-200 w-full mb-4 p-2 border border-white rounded-r-full rounded-l-full cursor-pointer">Copy Code</button>
-
-<div class="flex flex-col mb-4">
-  <label class="font-['Quicksand'] text-slate-200 mb-1.5 font-semibold" for="player-name">Your name</label>
-
-  <input
-    class="text-6xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
-    type="text"
-    id="player-name"
-    @oninput="e => HandlePlayerNameChange(e.Value?.ToString())"/>
-</div>
-
-<h4 class="font-['Quicksand'] text-slate-400 mb-16">Leave blank for a randomly generated name</h4>
-
-<div class="flex flex-col gap-8 items-center">
-  <div class="flex gap-4">
-    <span class="relative flex h-4 w-4">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-600"></span>
-    </span>
-
-    <span class="relative flex h-4 w-4">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-600"></span>
-    </span>
-
-    <span class="relative flex h-4 w-4">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-600"></span>
-    </span>
+    <input
+      class="text-4xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest uppercase focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
+      type="text"
+      id="game-code"
+      value="@GameShareCode"
+      readonly="readonly"/>
   </div>
 
-  <h4 class="font-['Quicksand'] text-slate-200 text-lg font-semibold">Waiting for other player to join</h4>
+  <button @onclick="@CopyToClipboard" class="font-['Quicksand'] text-xl text-center text-slate-200 w-full p-2 border border-white rounded-r-full rounded-l-full cursor-pointer">Copy Code</button>
+
+  <div>
+    <div class="flex flex-col">
+      <label class="font-['Quicksand'] text-slate-200 font-semibold" for="player-name">Your name</label>
+
+      <input
+        class="text-4xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
+        type="text"
+        id="player-name"
+        @oninput="e => HandlePlayerNameChange(e.Value?.ToString())"/>
+    </div>
+
+    <h4 class="font-['Quicksand'] text-slate-400 pt-1">Leave blank for a randomly generated name</h4>
+  </div>
+  
+  <div class="flex flex-col gap-8 items-center">
+    <div class="flex gap-4">
+      <span class="relative flex h-4 w-4">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-600"></span>
+      </span>
+
+      <span class="relative flex h-4 w-4">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-600"></span>
+      </span>
+
+      <span class="relative flex h-4 w-4">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-600"></span>
+      </span>
+    </div>
+
+    <h4 class="font-['Quicksand'] text-slate-200 text-lg font-semibold">Waiting for other player to join</h4>
+  </div>
 </div>
 
 @code

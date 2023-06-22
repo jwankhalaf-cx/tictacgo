@@ -8,7 +8,10 @@ module.exports = {
     extend: {
       backgroundImage: {
         'main-pattern': "url('/images/background.svg')",
-      }
+      },
+      screens: {
+        'sm': '400px',
+      },
     },
   },
   plugins: [require('@tailwindcss/forms')]
