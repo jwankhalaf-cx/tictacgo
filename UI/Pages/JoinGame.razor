@@ -2,22 +2,25 @@
 
 @inject NavigationManager Navigation
 
-<h1 class="font-['Pacifico'] text-5xl focus:outline-none text-center mb-12">
-  <span class="text-[#d877aa]">Join</span> <span class="text-[#f59771]">Game</span>
-</h1>
+<PageTitle>TicTacGo | Join game</PageTitle>
 
-<div class="flex flex-col mb-4">
-  <label class="font-['Quicksand'] text-slate-200 mb-1.5 font-semibold" for="game-code">Enter game code</label>
+<div class="">
+  <h1 class="font-['Pacifico'] text-5xl focus:outline-none text-center mb-12">
+    <span class="text-[#d877aa]">Join</span> <span class="text-[#f59771]">Game</span>
+  </h1>
 
-  <input
-    class="text-6xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest uppercase focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
-    type="text"
-    id="game-code"
-    maxlength="6"
-    @oninput="e => HandleGameCodeInputChange(e.Value?.ToString())"/>
-</div>
+  <div class="flex flex-col mb-4">
+    <label class="font-['Quicksand'] text-slate-200 mb-1.5 font-semibold" for="game-code">Enter game code</label>
 
-<div class="font-['Quicksand'] flex flex-col text-white m-20 align-center justify-between h-1/2">
+    <input
+      class="text-6xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest uppercase focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
+      type="text"
+      id="game-code"
+      maxlength="6"
+      @oninput="e => HandleGameCodeInputChange(e.Value?.ToString())"/>
+  </div>
+
+
   <button
     @onclick="@Join"
     class="w-full inline-block font-['Quicksand'] text-xl text-center text-slate-200 p-2 border border-white rounded-r-full rounded-l-full disabled:opacity-70 cursor-pointer"

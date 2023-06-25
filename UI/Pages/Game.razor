@@ -8,9 +8,9 @@
 @using UI.Components
 @implements IAsyncDisposable
 
-<PageTitle>TicTacGo Game</PageTitle>
+<PageTitle>TicTacGo | Game</PageTitle>
 
-<div class="pt-20">
+<div class="">
   @if (_gameCanStart)
   {
     @if (_host is {HasWon: true })
@@ -84,7 +84,6 @@
   {
     <GameCode GameShareCode="@GameCode" OnNameInputFunction="@NameChanged"/>
   }
-
 </div>
 
 @code {
