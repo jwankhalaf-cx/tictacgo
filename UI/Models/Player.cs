@@ -15,4 +15,5 @@ public class Player
   public bool HasTurn { get; init; }
 
   public bool HasWon { get; set; }
+
 }

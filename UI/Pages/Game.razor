@@ -13,38 +13,30 @@
 <div class="">
   @if (_gameCanStart)
   {
-    @if (_host is {HasWon: true })
+    @if (_host is { HasWon: true })
     {
       @if (_host.ConnectionId == _clientConnectionId)
       {
-        <WinnerScreen Winner="@_host" RestartGame="@RestartGame"/>
+        <WinnerScreen Winner="@_host" RestartGame="@RestartGame" />
       }
       else
       {
-        <LoserScreen Loser="@_guest" RestartGame="@RestartGame"/>
+        <LoserScreen Loser="@_guest" RestartGame="@RestartGame" />
       }
     }
-    else if (_guest is {HasWon: true })
+    else if (_guest is { HasWon: true })
     {
       @if (_guest.ConnectionId == _clientConnectionId)
       {
-        <WinnerScreen Winner="@_guest" RestartGame="@RestartGame"/>
+        <WinnerScreen Winner="@_guest" RestartGame="@RestartGame" />
       }
       else
       {
-        <LoserScreen Loser="@_host" RestartGame="@RestartGame"/>
+        <LoserScreen Loser="@_host" RestartGame="@RestartGame" />
       }
     }
-    else if (_host is {HasTurn: false } && _guest is {HasTurn: false })
+    else if (_host is { HasTurn: false } && _guest is { HasTurn: false })
     {
-      if (_host.ConnectionId == _clientConnectionId)
-      {
-        <DrawScreen Player="@_host" RestartGame="@RestartGame"/>
-      }
-      else
-      {
-        <DrawScreen Player="@_guest" RestartGame="@RestartGame"/>
-      }
     }
     else
     {
@@ -55,34 +47,31 @@
 
           <input
             class="text-6xl text-amber-400 bg-slate-900 font-bold rounded py-2 px-6 tracking-widest focus:border-amber-500 focus:ring-amber-500 focus:shadow-none"
-            type="text"
-            id="player-name"
-            @bind="_joinerName"/>
+            type="text" id="player-name" @bind="_joinerName" />
         </div>
 
         <h4 class="font-['Quicksand'] text-slate-400 mb-16">Leave blank for a randomly generated name</h4>
 
-        <button @onclick="@HandleJoinerClick" class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Start Game</button>
+        <button @onclick="@HandleJoinerClick"
+          class="font-['Quicksand'] text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Start
+          Game</button>
       }
       else
       {
         <div class="flex justify-center gap-9 pb-6">
-          <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId"/>
+          <PlayerCard Player="@_host" ClientConnectionId="@_clientConnectionId" />
 
-          <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId"/>
+          <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId" />
         </div>
 
-        <GameGrid
-          GridCells="@_gameBoard"
-          ActiveMark="@_activeMark"
-          OnClickFunction="@MakeMove"
-          CanMakeMove="@CanMakeMove()"/>
+        <GameGrid GridCells="@_gameBoard" ActiveMark="@_activeMark" OnClickFunction="@MakeMove"
+          CanMakeMove="@CanMakeMove()" />
       }
     }
   }
   else
   {
-    <GameCode GameShareCode="@GameCode" OnNameInputFunction="@NameChanged"/>
+    <GameCode GameShareCode="@GameCode" OnNameInputFunction="@NameChanged" />
   }
 </div>
 
@@ -110,18 +99,18 @@
     Uri uri = Navigation.ToAbsoluteUri(query == "join" ? $"/gamehub/{GameCode}/join" : $"/gamehub/{GameCode}");
 
     _hubConnection = new HubConnectionBuilder()
-      .WithUrl(uri)
-      .Build();
+    .WithUrl(uri)
+    .Build();
 
     _hubConnection.On("NotAllowedToJoin", () =>
     {
       Navigation.NavigateTo($"/ErrorPage", new NavigationOptions
-      {
-        HistoryEntryState = "Navigation state"
-      });
+        {
+          HistoryEntryState = "Navigation state"
+        });
     });
 
-    _hubConnection.On<Models.Game>("RenderGame", game =>
+    _hubConnection.On<Models.Game>("RenderGame", async game =>
     {
       _gameBoard = game.Board;
       _gameCanStart = game.CanStart;
@@ -140,8 +129,11 @@
       {
         _activeMark = _guest.Mark;
       }
-
-      InvokeAsync(StateHasChanged);
+      if (_host is { HasTurn: false } && _guest is { HasTurn: false })
+      {
+        await NextRound();
+      }
+      await InvokeAsync(StateHasChanged);
     });
 
     await _hubConnection.StartAsync();
@@ -150,7 +142,7 @@
   }
 
   public bool IsConnected =>
-    _hubConnection?.State == HubConnectionState.Connected;
+  _hubConnection?.State == HubConnectionState.Connected;
 
   private async Task MakeMove(Move model)
   {
@@ -190,6 +182,14 @@
     if (_hubConnection is not null)
     {
       await _hubConnection.SendAsync("RestartGame", GameCode);
+    }
+  }
+
+  private async Task NextRound()
+  {
+    if (_hubConnection is not null)
+    {
+      await _hubConnection.SendAsync("NextRound", GameCode);
     }
   }
 

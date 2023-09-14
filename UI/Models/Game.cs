@@ -13,4 +13,6 @@ public class Game
   public Marks[]? Board { get; set; }
 
   public bool CanStart { get; set; }
+
+  public int Rounds { get; set; }
 }
