@@ -25,7 +25,7 @@ public class Game
   public Player? Host { get; private set; }
 
   public Player? Guest { get; private set; }
-  public int Rounds { get; set; }
+  public int Rounds {get;set;}
   public Marks[] GetBoard()
   {
     return _gameBoard;
@@ -96,22 +96,18 @@ public class Game
         if (Host is not null && Host.ConnectionId == model.ConnectionId && Host.Mark == model.Mark)
         {
           Host.RoundWon++;
-          if (Host.RoundWon > 1)
-          {
-            if (Guest is not null) Guest.RoundWon = 0;
-            Host.HasWon = true;
-          }
+          if (Host.RoundWon > 1) {
+            Guest.RoundWon = 0;
+            Host.HasWon = true;}
           Host.HasTurn = false;
           if (Guest is not null) Guest.HasTurn = false;
         }
         else if (Guest is not null && Guest.ConnectionId == model.ConnectionId && Guest.Mark == model.Mark)
         {
           Guest.RoundWon++;
-          if (Guest.RoundWon > 1)
-          {
-            if (Host is not null) Host.RoundWon = 0;
-            Guest.HasWon = true;
-          }
+          if (Guest.RoundWon > 1) {
+            Host.RoundWon = 0;
+            Guest.HasWon = true;}
           Guest.HasTurn = false;
           if (Host is not null) Host.HasTurn = false;
         }
@@ -154,7 +150,6 @@ public class Game
 
   public void ResetGame()
   {
-    Rounds = 0;
     _gameBoard = new[]
     {
       Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet,
@@ -182,8 +177,6 @@ public class Game
   }
   public void NextRound()
   {
-    Rounds++;
-    Console.WriteLine(Rounds);
     _gameBoard = new[]
     {
       Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet,
@@ -202,7 +195,7 @@ public class Game
       Host.HasTurn = true;
       Guest.HasTurn = false;
     }
+
     _hostPlayedFirst = !_hostPlayedFirst;
-     Console.WriteLine(_hostPlayedFirst);
   }
 }
