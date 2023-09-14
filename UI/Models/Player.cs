@@ -16,4 +16,6 @@ public class Player
 
   public bool HasWon { get; set; }
 
+  public int RoundWon { get; set; }
+
 }

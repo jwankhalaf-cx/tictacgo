@@ -11,6 +11,10 @@
 <PageTitle>TicTacGo | Game</PageTitle>
 
 <div class="">
+  @if (_host is not null && _guest is not null)
+  {
+    <div class="text-xl text-white mx-auto w-fit">Rounds Left @_rounds</div>
+  }
   @if (_gameCanStart)
   {
     @if (_host is { HasWon: true })
@@ -35,8 +39,16 @@
         <LoserScreen Loser="@_host" RestartGame="@RestartGame" />
       }
     }
-    else if (_host is { HasTurn: false } && _guest is { HasTurn: false })
+    else if (_rounds == 0)
     {
+      if (_host is not null && _host.ConnectionId == _clientConnectionId)
+      {
+        <DrawScreen Player="@_host" RestartGame="@RestartGame" />
+      }
+      else
+      {
+        <DrawScreen Player="@_guest" RestartGame="@RestartGame" />
+      }
     }
     else
     {
@@ -63,7 +75,10 @@
 
           <PlayerCard Player="@_guest" ClientConnectionId="@_clientConnectionId" />
         </div>
-
+        if (_host is { HasTurn: false } && _guest is { HasTurn: false })
+        {
+          <NextRoundbtn NextRound="@NextRound" />
+        }
         <GameGrid GridCells="@_gameBoard" ActiveMark="@_activeMark" OnClickFunction="@MakeMove"
           CanMakeMove="@CanMakeMove()" />
       }
@@ -89,7 +104,7 @@
   private string _clientConnectionId = string.Empty;
   private bool _isJoiner;
   private string _joinerName = string.Empty;
-
+  private int _rounds;
   protected override async Task OnInitializedAsync()
   {
     string query = new Uri(Navigation.Uri).Segments[^1];
@@ -115,7 +130,7 @@
       _gameBoard = game.Board;
       _gameCanStart = game.CanStart;
       _host = game.Host;
-
+      _rounds = game.Rounds;
       if (game.Guest is not null)
       {
         _guest = game.Guest;
@@ -129,10 +144,7 @@
       {
         _activeMark = _guest.Mark;
       }
-      if (_host is { HasTurn: false } && _guest is { HasTurn: false })
-      {
-        await NextRound();
-      }
+
       await InvokeAsync(StateHasChanged);
     });
 
@@ -187,7 +199,7 @@
 
   private async Task NextRound()
   {
-    if (_hubConnection is not null)
+    if (_host is { HasTurn: false } && _guest is { HasTurn: false } && _hubConnection is not null)
     {
       await _hubConnection.SendAsync("NextRound", GameCode);
     }
