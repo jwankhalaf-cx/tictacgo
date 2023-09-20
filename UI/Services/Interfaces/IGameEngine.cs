@@ -20,4 +20,5 @@ public interface IGameEngine
   Game? SetPlayerName(string gameCode, string connectionId, string name);
 
   Game? ResetGame(string gameCode);
+  Game? NextRound(string gameCode);
 }

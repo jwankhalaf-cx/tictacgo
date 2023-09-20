@@ -43,6 +43,7 @@
   {
     <div class="font-['Quicksand'] text-slate-200 text-lg font-semibold text-center @(!Player.HasTurn ? "invisible" : "")">Your turn</div>
   }
+  <Score RoundWon="@Player.RoundWon"/>
 </div>
 
 @code {

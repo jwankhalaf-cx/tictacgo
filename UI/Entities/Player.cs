@@ -21,4 +21,6 @@ public class Player
     Name = string.IsNullOrEmpty(name) ? $"User{Guid.NewGuid().ToString("n")[..6]}" : name;
     ImageUrl = $"https://ui-avatars.com/api/?name={Name}&size=80&length=1&bold=true&format=svg";
   }
+  public int RoundWon {get;set;}
+
 }

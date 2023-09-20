@@ -19,7 +19,7 @@ public class GameEntityToModelMapper : IConverter<Game, Models.Game>
     if (sourceObject.Guest is not null) game.Guest = _playerMapper.Convert(sourceObject.Guest);
     game.Board = sourceObject.GetBoard();
     game.CanStart = sourceObject.CanStart();
-
+    game.Rounds = sourceObject.Rounds;
     return game;
   }
 }

@@ -111,4 +111,14 @@ public class GameEngine : IGameEngine
 
     return game;
   }
+  public Game? NextRound(string gameCode)
+  {
+    Game? game = GetGame(gameCode);
+
+    game?.NextRound();
+
+    _memoryCache.Set(gameCode, game);
+
+    return game;
+  }
 }

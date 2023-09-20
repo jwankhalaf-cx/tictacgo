@@ -13,7 +13,8 @@ public class PlayerEntityToModelMapper : IConverter<Player, Models.Player>
       ImageUrl = sourceObject.ImageUrl,
       Mark = sourceObject.Mark,
       HasTurn = sourceObject.HasTurn,
-      HasWon = sourceObject.HasWon
+      HasWon = sourceObject.HasWon,
+      RoundWon = sourceObject.RoundWon
     };
   }
 }

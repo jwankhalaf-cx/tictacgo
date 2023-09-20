@@ -112,6 +112,18 @@ public class GameHub : Hub
     }
   }
 
+  public async Task NextRound(string gameCode)
+  {
+    Game? game = _gameEngine.NextRound(gameCode);
+
+    if (game is not null)
+    {
+      Models.Game gameDto = _gameMapper.Convert(game);
+
+      await Clients.Group(gameCode).SendAsync("RenderGame", gameDto);
+    }
+  }
+
   public async Task PlayerNameChanged(string gameCode, string connectionId, string name)
   {
     Game? game = _gameEngine.SetPlayerName(gameCode, connectionId, name);

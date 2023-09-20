@@ -1,0 +1,10 @@
+<button onclick="@NextRound"
+    class="font-['Quicksand'] mt-4 text-xl text-center text-slate-200 p-2 w-full border border-white rounded-r-full rounded-l-full cursor-pointer">Next
+    Round</button>
+
+@code {
+
+    [Parameter]
+    public EventCallback NextRound { get; set; }
+
+}

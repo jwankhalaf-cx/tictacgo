@@ -25,7 +25,7 @@ public class Game
   public Player? Host { get; private set; }
 
   public Player? Guest { get; private set; }
-
+  public int Rounds { get; set; } = 10;
   public Marks[] GetBoard()
   {
     return _gameBoard;
@@ -85,7 +85,7 @@ public class Game
             Host.HasTurn = false;
             Guest.HasTurn = false;
           }
-
+          Rounds--;
           return GameOutcome.Draw;
         }
         else
@@ -95,17 +95,25 @@ public class Game
       case true:
         if (Host is not null && Host.ConnectionId == model.ConnectionId && Host.Mark == model.Mark)
         {
-          Host.HasWon = true;
+          Host.RoundWon++;
+          if (Host.RoundWon == 3)
+          {
+            Host.HasWon = true;
+          }
           Host.HasTurn = false;
           if (Guest is not null) Guest.HasTurn = false;
         }
         else if (Guest is not null && Guest.ConnectionId == model.ConnectionId && Guest.Mark == model.Mark)
         {
-          Guest.HasWon = true;
+          Guest.RoundWon++;
+          if (Guest.RoundWon == 3)
+          {
+            Guest.HasWon = true;
+          }
           Guest.HasTurn = false;
           if (Host is not null) Host.HasTurn = false;
         }
-
+        Rounds--;
         return GameOutcome.Win;
     }
   }
@@ -144,6 +152,7 @@ public class Game
 
   public void ResetGame()
   {
+    Rounds = 10;
     _gameBoard = new[]
     {
       Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet,
@@ -153,7 +162,31 @@ public class Game
     if (Host is null || Guest is null) return;
 
     Host.HasWon = false;
+    Host.RoundWon = 0;
     Guest.HasWon = false;
+    Guest.RoundWon = 0;
+    if (_hostPlayedFirst)
+    {
+      Host.HasTurn = false;
+      Guest.HasTurn = true;
+    }
+    else
+    {
+      Host.HasTurn = true;
+      Guest.HasTurn = false;
+    }
+
+    _hostPlayedFirst = !_hostPlayedFirst;
+  }
+  public void NextRound()
+  {
+    _gameBoard = new[]
+    {
+      Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet, Marks.NotSet,
+      Marks.NotSet
+    };
+
+    if (Host is null || Guest is null) return;
 
     if (_hostPlayedFirst)
     {
